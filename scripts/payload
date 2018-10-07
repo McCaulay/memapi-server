@@ -1,0 +1,3 @@
+#!/bin/bash
+
+nc -q 0 192.168.0.31 9020 < memapi-server.bin
