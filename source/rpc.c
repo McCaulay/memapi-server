@@ -2,6 +2,7 @@
 #include "ps4.h"
 #include "rpc.h"
 #include "networking.h"
+#include "modules.h"
 #include "sysctl.h"
 
 void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
@@ -31,7 +32,7 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 		case GET_FIRMWARE:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call getFirmware() invoked\n", ip);
-			error = getFirmware(outputBuffer, &outputLength);
+			error = getFirmware(ip, &outputBuffer, &outputLength);
 			break;
 		case GET_IDPS:
 			if (DEBUG)
@@ -51,7 +52,7 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 		case GET_MODULES:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call getModules() invoked\n", ip);
-			// error = getModules(outputBuffer, &outputLength);
+			error = getModules(ip, &outputBuffer, &outputLength);
 			break;
 		case GET_REGIONS:
 			if (DEBUG)
@@ -92,7 +93,7 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 
 	if (DEBUG && error != NO_ERROR)
 		networkSendDebugMessage("		[%s] RPC Error %d\n", ip, error);
-
+	
 	// Format response
 	unsigned char* outputBufferFull = malloc(outputLength + 1);
 	outputBufferFull[0] = error; // First byte is always error byte
@@ -103,5 +104,7 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 
 	// Free allocated memory
 	free(outputBuffer);
+	outputBuffer = NULL;
 	free(outputBufferFull);
+	outputBufferFull = NULL;
 }

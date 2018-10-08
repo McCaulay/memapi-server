@@ -17,6 +17,7 @@ int _main(void) {
 	initLibc();
 	initNetwork();
 	initPthread();
+	initModule();
 
 	// Open Debug Connection
 	if (DEBUG)

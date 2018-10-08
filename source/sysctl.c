@@ -1,9 +1,10 @@
 #include "defines.h"
 #include "ps4.h"
+#include "networking.h"
 #include "sysctl.h"
 #include "rpc.h"
 
-int getFirmware(unsigned char* firmware, int* length)
+int getFirmware(char* ip, unsigned char** firmware, int* length)
 {
 	size_t len = 0;
 	int mib[2];
@@ -19,15 +20,18 @@ int getFirmware(unsigned char* firmware, int* length)
 		return CTL_ERROR;
 
 	// Re-allocate memory
-	free(firmware);
-	firmware = malloc(7);
+	*firmware = realloc(*firmware, 7);
 
 	// Format Version
-	sprintf((char*)firmware, "%d.%02d", version[2], version[3]);
+	sprintf((char*)(*firmware), "%d.%02d", version[2], version[3]);
 
-	*length = strlen((char*)firmware);
+	*length = strlen((char*)(*firmware));
+	
+	if (DEBUG)
+		networkSendDebugMessage("			[%s@getFirmware] Firmware: %s\n", ip, (char*)(*firmware));
 
 	free(version);
+	version = NULL;
 
 	return NO_ERROR;
 }
