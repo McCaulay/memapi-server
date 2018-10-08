@@ -24,7 +24,7 @@ struct sockaddr_in networkAdress(uint16_t port);
  *  name:	The network socket name.
  *	port:	The port number you are listening on.
  *
- *  returns: socket
+ *  returns: socket | -1 on error
  */
 int networkListen(const char * name, uint16_t port);
 
@@ -111,7 +111,7 @@ do {\
  *
  *  returns: Error status
  */
-int networkReceiveData(int socket, char* buffer, int size);
+int networkReceiveData(int socket, unsigned char* buffer, int size);
 
 /*
  * Function:  networkSendData
@@ -124,7 +124,7 @@ int networkReceiveData(int socket, char* buffer, int size);
  *
  *  returns: Error status
  */
-int networkSendData(int socket, char* buffer, int size);
+int networkSendData(int socket, unsigned char* buffer, int size);
 
 /*
  * Function:  networkSendDebugData
@@ -136,7 +136,7 @@ int networkSendData(int socket, char* buffer, int size);
  *
  *  returns: Error status
  */
-int networkSendDebugData(char* buffer, int size);
+int networkSendDebugData(unsigned char* buffer, int size);
 
 /*
  * Function:  networkCloseConnection

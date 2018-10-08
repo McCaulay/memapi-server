@@ -20,12 +20,21 @@ int networkListen(const char * name, uint16_t port)
 
 	// Create the socket.
 	int socket = sceNetSocket("server", AF_INET, SOCK_STREAM, 0);
+	if (socket == -1) {
+		return -1;
+	}
 	
 	// Bind the socket
-	sceNetBind(socket, (struct sockaddr *)&server, sizeof(server));
+	int error = sceNetBind(socket, (struct sockaddr *)&server, sizeof(server));
+	if (error == -1) {
+		return -1;
+	}
 
 	// Listen to the socket
-	sceNetListen(socket, 10);
+	error = sceNetListen(socket, 10);
+	if (error == -1) {
+		return -1;
+	}
 
 	return socket;
 }
@@ -51,17 +60,17 @@ void networkOpenDebugConnection(const char *ip, uint16_t port)
 	debugSocket = networkOpenConnection("debug", ip, port);
 }
 
-int networkReceiveData(int socket, char* buffer, int size)
+int networkReceiveData(int socket, unsigned char* buffer, int size)
 {
 	return sceNetRecv(socket, buffer, size, 0);
 }
 
-int networkSendData(int socket, char* buffer, int size)
+int networkSendData(int socket, unsigned char* buffer, int size)
 {
 	return sceNetSend(socket, buffer, size, 0);
 }
 
-int networkSendDebugData(char* buffer, int size)
+int networkSendDebugData(unsigned char* buffer, int size)
 {
 	return networkSendData(debugSocket, buffer, size);
 }

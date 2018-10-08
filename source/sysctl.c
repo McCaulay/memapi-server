@@ -1,9 +1,9 @@
 #include "defines.h"
 #include "ps4.h"
-#include "rpc/sysctl.h"
+#include "sysctl.h"
 #include "rpc.h"
 
-int getFirmware(char* firmware, int* length)
+int getFirmware(unsigned char* firmware, int* length)
 {
 	size_t len = 0;
 	int mib[2];
@@ -23,9 +23,11 @@ int getFirmware(char* firmware, int* length)
 	firmware = malloc(7);
 
 	// Format Version
-	sprintf(firmware, "%d.%02d", version[2], version[3]);
+	sprintf((char*)firmware, "%d.%02d", version[2], version[3]);
 
-	*length = strlen(firmware);
+	*length = strlen((char*)firmware);
+
+	free(version);
 
 	return NO_ERROR;
 }

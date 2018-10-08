@@ -210,6 +210,9 @@
  * --------------------
  * Get the firmware version
  *
+ *	firmware:	The buffer to put the firmware id into.
+ *	length:		The length variable to put the length of the firmware id into.
+ *
  *  returns: RPC Error code
  */
-int getFirmware(char* firmware, int* length);
+int getFirmware(unsigned char* firmware, int* length);

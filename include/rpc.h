@@ -39,4 +39,4 @@
  *
  *  returns: void
  */
-void handleRpc(int socket, char* ip, char* buffer, int length);
+void handleRpc(int socket, char* ip, unsigned char* buffer, int length);
