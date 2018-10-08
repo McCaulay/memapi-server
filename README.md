@@ -1,8 +1,8 @@
 # PS4 MEMAPI Server
 
 ## Debugging
-Edit the ```include/defines.h``` file to change the debug IP address and port to your PC.
-```
+Edit the `include/defines.h` file to change the debug IP address and port to your PC.
+```c
 #define DEBUG 1
 #define DEBUG_IP "192.168.0.38"
 #define DEBUG_PORT 9023
@@ -26,4 +26,5 @@ Available Remote Functions
 | searchEnd()          | SEARCH_END           | End the search                                              |
 
 Kernel Escalation from - https://github.com/VV1LD/PS4-KernelDumper
+
 Compiled using PS4 SDK - https://github.com/xvortex/ps4-payload-sdk

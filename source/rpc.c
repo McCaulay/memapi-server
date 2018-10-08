@@ -4,6 +4,7 @@
 #include "networking.h"
 #include "modules.h"
 #include "processes.h"
+#include "memory.h"
 #include "sysctl.h"
 
 void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
@@ -18,12 +19,12 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 		case POKE:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call poke() invoked\n", ip);
-			// error = poke(buffer, length);
+			// error = poke(ip, buffer, length);
 			break;
 		case PEEK:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call peek() invoked\n", ip);
-			// error = peek(ip, &outputBuffer, &outputLength, buffer, length);
+			error = peek(ip, &outputBuffer, &outputLength, buffer, length);
 			break;
 		case GET_HWID:
 			if (DEBUG)

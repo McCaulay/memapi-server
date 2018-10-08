@@ -21,6 +21,9 @@ void *client(void* args)
 		memset(buffer, 0, 512);
 	}
 
+	if (DEBUG)
+		networkSendDebugMessage("		[%s] Connection disconnected\n", ip);
+
 	networkCloseConnection(socket);
 	return NULL;
 }
