@@ -2,6 +2,7 @@
 #include "ps4.h"
 #include "networking.h"
 #include "server.h"
+#include "escalate.h"
 
 /*
  * Function:  _main
@@ -19,10 +20,15 @@ int _main(void) {
 	initPthread();
 	initModule();
 
+	// Escalate privileges to root
+	if (DEBUG)
+		networkSendDebugMessage("[+] Escalating privileges to root...\n");
+	kexec(&getRoot, NULL);
+
 	// Open Debug Connection
 	if (DEBUG)
 	{
-		networkOpenDebugConnection("192.168.0.38", 9023);
+		networkOpenDebugConnection(DEBUG_IP, DEBUG_PORT);
 		networkSendDebugMessage("[+] Server starting...\n[+] Process id: %d\n", syscall(20));
 	}
 

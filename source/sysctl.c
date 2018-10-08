@@ -7,10 +7,7 @@
 int getFirmware(char* ip, unsigned char** firmware, int* length)
 {
 	size_t len = 0;
-	int mib[2];
-
-	mib[0] = CTL_KERN;
-	mib[1] = SDK_VERSION;
+	int mib[2] = { CTL_KERN, SDK_VERSION };
 	if (sysctl(mib, 2, NULL, &len, NULL, 0) != 0)
 		return CTL_ERROR;
 

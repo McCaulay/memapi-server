@@ -17,7 +17,8 @@ int getModules(char* ip, unsigned char** buffer, int* length)
 
 	getLoadedModules(&modules[0], MAX_MODULES, &moduleCount);
 
-	networkSendDebugMessage("			[%s@getModules] Found %d modules\n", ip, moduleCount);
+	if (DEBUG)
+		networkSendDebugMessage("			[%s@getModules] Found %d modules\n", ip, moduleCount);
 
 	for (int i = 0; i < moduleCount; i++)
 	{
@@ -36,7 +37,8 @@ int getModules(char* ip, unsigned char** buffer, int* length)
 		*(long*)(*buffer + *length) = info.dataSize;
 		*length += sizeof(long);
 
-		networkSendDebugMessage("			[%s@getModules] Module - Id: %d, Name: %s, Code Size: 0x%x, Data Size: 0x%x\n", ip, modules[i], info.name, info.codeSize, info.dataSize);
+		if (DEBUG)
+			networkSendDebugMessage("			[%s@getModules] Module - Id: %d, Name: %s, Code Size: 0x%x, Data Size: 0x%x\n", ip, modules[i], info.name, info.codeSize, info.dataSize);
 	}
 
 	return NO_ERROR;

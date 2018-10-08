@@ -3,6 +3,7 @@
 #include "rpc.h"
 #include "networking.h"
 #include "modules.h"
+#include "processes.h"
 #include "sysctl.h"
 
 void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
@@ -22,12 +23,12 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 		case PEEK:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call peek() invoked\n", ip);
-			// error = peek(outputBuffer, &outputLength, buffer, length);
+			// error = peek(ip, &outputBuffer, &outputLength, buffer, length);
 			break;
 		case GET_HWID:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call getHardwareId() invoked\n", ip);
-			// error = getHardwareId(outputBuffer, &outputLength);
+			// error = getHardwareId(ip, &outputBuffer, &outputLength);
 			break;
 		case GET_FIRMWARE:
 			if (DEBUG)
@@ -37,17 +38,17 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 		case GET_IDPS:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call getIdps() invoked\n", ip);
-			// error = getIdps(outputBuffer, &outputLength);
+			// error = getIdps(ip, &outputBuffer, &outputLength);
 			break;
 		case GET_PSID:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call getPsid() invoked\n", ip);
-			// error = getPsid(outputBuffer, &outputLength);
+			// error = getPsid(ip, &outputBuffer, &outputLength);
 			break;
 		case GET_PROCESSES:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call getProcesses() invoked\n", ip);
-			// error = getProcesses(outputBuffer, &outputLength);
+			error = getProcesses(ip, &outputBuffer, &outputLength);
 			break;
 		case GET_MODULES:
 			if (DEBUG)
@@ -57,27 +58,27 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 		case GET_REGIONS:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call getRegions() invoked\n", ip);
-			// error = getRegions(outputBuffer, &outputLength, buffer, length);
+			// error = getRegions(ip, &outputBuffer, &outputLength, buffer, length);
 			break;
 		case SEARCH_START:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call searchStart() invoked\n", ip);
-			// error = searchStart(outputBuffer, &outputLength, buffer, length);
+			// error = searchStart(ip, &outputBuffer, &outputLength, buffer, length);
 			break;
 		case SEARCH_RESCAN:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call searchRescan() invoked\n", ip);
-			// error = searchRescan(outputBuffer, &outputLength, buffer, length);
+			// error = searchRescan(ip, &outputBuffer, &outputLength, buffer, length);
 			break;
 		case SEARCH_GET_RESULTS:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call searchGetResults() invoked\n", ip);
-			// error = searchGetResults(outputBuffer, &outputLength);
+			// error = searchGetResults(ip, &outputBuffer, &outputLength);
 			break;
 		case SEARCH_COUNT_RESULTS:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call searchCountResults() invoked\n", ip);
-			// error = searchCountResults(outputBuffer, &outputLength);
+			// error = searchCountResults(ip, &outputBuffer, &outputLength);
 			break;
 		case SEARCH_END:
 			if (DEBUG)
