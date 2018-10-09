@@ -1,5 +1,8 @@
 #pragma once
 
+#include "memory.h"
+#include "sysctl.h"
+
 #define NO_TYPE 0
 #define POKE 1
 #define PEEK 2

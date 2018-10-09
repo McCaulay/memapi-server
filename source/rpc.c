@@ -4,8 +4,6 @@
 #include "networking.h"
 #include "modules.h"
 #include "processes.h"
-#include "memory.h"
-#include "sysctl.h"
 
 void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 {

@@ -25,6 +25,6 @@ Available Remote Functions
 | searchCountResults() | SEARCH_COUNT_RESULTS | Get the number of results                                   |
 | searchEnd()          | SEARCH_END           | End the search                                              |
 
-Kernel Escalation from - https://github.com/VV1LD/PS4-KernelDumper
+Thanks to 2much4u, CTurt, Kiwidog and Golden for sources / advice.
 
-Compiled using PS4 SDK - https://github.com/xvortex/ps4-payload-sdk
+Compiled using PS4 SDK - https://github.com/McCaulay/ps4-payload-sdk

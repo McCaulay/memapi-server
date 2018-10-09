@@ -53,6 +53,28 @@ struct thread {
     	struct proc *td_proc;
 };
 
+#define X86_CR0_WP (1 << 16)
+
+static inline __attribute__((always_inline)) uint64_t readCr0(void) {
+  uint64_t cr0;
+  
+  __asm__ volatile (
+    "movq %0, %%cr0"
+    : "=r" (cr0)
+    : : "memory"
+  );
+  
+  return cr0;
+}
+
+static inline __attribute__((always_inline)) void writeCr0(uint64_t cr0) {
+  __asm__ volatile (
+    "movq %%cr0, %0"
+    : : "r" (cr0)
+    : "memory"
+  );
+}
+
 /*
  * Function:  getRoot
  * --------------------
