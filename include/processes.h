@@ -1,6 +1,22 @@
 #pragma once
 
 /*
+ * Struct:  inputAttach
+ * --------------------
+ *
+ *	processId:	4 Bytes | The process id.
+ */
+struct inputAttach;
+
+/*
+ * Struct:  inputDetach
+ * --------------------
+ *
+ *	processId:	4 Bytes | The process id.
+ */
+struct inputDetach;
+
+/*
  * Function:  getMaxProcesses
  * --------------------
  * Get the maximum number of processes
@@ -24,3 +40,29 @@ int getMaxProcesses(char* ip);
  *  returns: RPC Error code
  */
 int getProcesses(char* ip, unsigned char** buffer, int* length);
+
+/*
+ * Function:  attach
+ * --------------------
+ * Attach to a process
+ *
+ *	ip:				The client IP.
+ *	inputBuffer:	The input buffer containing the arguments. (Process)
+ *	inputLength:	The total length of the input buffer.
+ *
+ *  returns: RPC Error code
+ */
+int attach(char* ip, unsigned char* inputBuffer, int inputLength);
+
+/*
+ * Function:  detach
+ * --------------------
+ * Detach from a process
+ *
+ *	ip:				The client IP.
+ *	inputBuffer:	The input buffer containing the arguments. (Process)
+ *	inputLength:	The total length of the input buffer.
+ *
+ *  returns: RPC Error code
+ */
+int detach(char* ip, unsigned char* inputBuffer, int inputLength);

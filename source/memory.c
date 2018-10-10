@@ -30,23 +30,6 @@ int peek(char* ip, unsigned char** outputBuffer, int* outputLength, unsigned cha
 	// Set output length
 	*outputLength = input.length;
 
-	// Attach to process
-    int result = ptrace(PT_ATTACH, input.processId, NULL, NULL);
-	wait(NULL);
-
-	if (result != 0)
-	{
-		if (DEBUG)
-		{
-			// TODO: Output process name as well as process id. Reuse processes.c code to gather this information.
-			networkSendDebugMessage("			[%s@peek] Failed to attach to process %d\n", ip, input.processId);
-			networkSendDebugMessage("			[%s@peek] Error %d: %s\n", ip, errno, strerror(errno));
-		}
-		return FAILED_ATTACH;
-	}
-	if (DEBUG)
-		networkSendDebugMessage("			[%s@peek] Attached to process %d\n", ip, input.processId);
-
 	// Read memory into buffer
 	struct ptrace_io_desc ptDesc;
 	ptDesc.piod_offs = (void*)(input.address);
@@ -74,9 +57,7 @@ int peek(char* ip, unsigned char** outputBuffer, int* outputLength, unsigned cha
 
 		// Append with ... if can't display all bytes
 		if (bytesToShow < input.length)
-		{
 			msgAppend += sprintf(msgAppend, "...");
-		}
 
 		// New line
 		msgAppend += sprintf(msgAppend, "\n");
@@ -86,12 +67,6 @@ int peek(char* ip, unsigned char** outputBuffer, int* outputLength, unsigned cha
 		// Free Message
 		free(msg);
 	}
-
-	// Detach from process
-	ptrace(PT_DETACH, input.processId, NULL, NULL);
-
-	if (DEBUG)
-		networkSendDebugMessage("			[%s@peek] Detached from process %d\n", ip, input.processId);
 
 	return NO_ERROR;
 }
@@ -104,23 +79,6 @@ int poke(char* ip, unsigned char* inputBuffer, int inputLength)
 	if (DEBUG)
 		networkSendDebugMessage("			[%s@poke] Process Id: %d, Address: 0x%08x, Length: %d\n", ip, input.processId, input.address, input.length);
 
-	// Attach to process
-    int result = ptrace(PT_ATTACH, input.processId, NULL, NULL);
-	wait(NULL);
-
-	if (result != 0)
-	{
-		if (DEBUG)
-		{
-			// TODO: Output process name as well as process id. Reuse processes.c code to gather this information.
-			networkSendDebugMessage("			[%s@poke] Failed to attach to process %d\n", ip, input.processId);
-			networkSendDebugMessage("			[%s@poke] Error %d: %s\n", ip, errno, strerror(errno));
-		}
-		return FAILED_ATTACH;
-	}
-	if (DEBUG)
-		networkSendDebugMessage("			[%s@poke] Attached to process %d\n", ip, input.processId);
-
 	// Write buffer into memory into
 	struct ptrace_io_desc ptDesc;
 	ptDesc.piod_offs = (void*)(input.address);
@@ -128,12 +86,36 @@ int poke(char* ip, unsigned char* inputBuffer, int inputLength)
 	ptDesc.piod_addr = &inputBuffer[1 + sizeof(struct inputPoke)];
 	ptDesc.piod_op = PIOD_WRITE_D;
 	ptrace(PT_IO, input.processId, &ptDesc, 0);
-	
-	// Detach from process
-	ptrace(PT_DETACH, input.processId, NULL, NULL);
 
 	if (DEBUG)
-		networkSendDebugMessage("			[%s@peek] Detached from process %d\n", ip, input.processId);
+	{
+		networkSendDebugMessage("			[%s@poke] Wrote %d bytes to process %d\n", ip, input.length, input.processId);
 
+		int bytesToShow = (input.length > 0x10 ? 0x10 : input.length); // Limit 16
+
+		// Create buffer for message
+		char* msg = malloc(18 + 4 + INET_ADDRSTRLEN + (bytesToShow * 3));
+		char* msgAppend = msg;
+
+		// Prepend
+		msgAppend += sprintf(msgAppend, "			[%s@poke] Input: ", ip);
+
+		// Loop bytes and format
+		for (int i = 0; i < bytesToShow; i++)
+			msgAppend += sprintf(msgAppend, "%02x ", inputBuffer[1 + sizeof(struct inputPoke) + i]);
+
+		// Append with ... if can't display all bytes
+		if (bytesToShow < input.length)
+			msgAppend += sprintf(msgAppend, "...");
+
+		// New line
+		msgAppend += sprintf(msgAppend, "\n");
+
+		networkSendDebugMessage(msg);
+
+		// Free Message
+		free(msg);
+	}
+	
 	return NO_ERROR;
 }

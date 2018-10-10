@@ -14,6 +14,19 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 	int method = (int)buffer[0];
 	switch (method)
 	{
+		/*
+		- Does not require attaching to peek/poke.
+		case ATTACH:
+			if (DEBUG)
+				networkSendDebugMessage("		[%s] Method call attach() invoked\n", ip);
+			error = attach(ip, buffer, length);
+			break;
+		case DETACH:
+			if (DEBUG)
+				networkSendDebugMessage("		[%s] Method call detach() invoked\n", ip);
+			error = detach(ip, buffer, length);
+			break;
+		*/
 		case POKE:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call poke() invoked\n", ip);
@@ -23,6 +36,31 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call peek() invoked\n", ip);
 			error = peek(ip, &outputBuffer, &outputLength, buffer, length);
+			break;
+		case SEARCH_START:
+			if (DEBUG)
+				networkSendDebugMessage("		[%s] Method call searchStart() invoked\n", ip);
+			// error = searchStart(ip, &outputBuffer, &outputLength, buffer, length);
+			break;
+		case SEARCH_RESCAN:
+			if (DEBUG)
+				networkSendDebugMessage("		[%s] Method call searchRescan() invoked\n", ip);
+			// error = searchRescan(ip, &outputBuffer, &outputLength, buffer, length);
+			break;
+		case SEARCH_GET_RESULTS:
+			if (DEBUG)
+				networkSendDebugMessage("		[%s] Method call searchGetResults() invoked\n", ip);
+			// error = searchGetResults(ip, &outputBuffer, &outputLength);
+			break;
+		case SEARCH_COUNT_RESULTS:
+			if (DEBUG)
+				networkSendDebugMessage("		[%s] Method call searchCountResults() invoked\n", ip);
+			// error = searchCountResults(ip, &outputBuffer, &outputLength);
+			break;
+		case SEARCH_END:
+			if (DEBUG)
+				networkSendDebugMessage("		[%s] Method call searchEnd() invoked\n", ip);
+			// error = searchEnd();
 			break;
 		case GET_HWID:
 			if (DEBUG)
@@ -58,31 +96,6 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call getRegions() invoked\n", ip);
 			// error = getRegions(ip, &outputBuffer, &outputLength, buffer, length);
-			break;
-		case SEARCH_START:
-			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call searchStart() invoked\n", ip);
-			// error = searchStart(ip, &outputBuffer, &outputLength, buffer, length);
-			break;
-		case SEARCH_RESCAN:
-			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call searchRescan() invoked\n", ip);
-			// error = searchRescan(ip, &outputBuffer, &outputLength, buffer, length);
-			break;
-		case SEARCH_GET_RESULTS:
-			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call searchGetResults() invoked\n", ip);
-			// error = searchGetResults(ip, &outputBuffer, &outputLength);
-			break;
-		case SEARCH_COUNT_RESULTS:
-			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call searchCountResults() invoked\n", ip);
-			// error = searchCountResults(ip, &outputBuffer, &outputLength);
-			break;
-		case SEARCH_END:
-			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call searchEnd() invoked\n", ip);
-			// error = searchEnd();
 			break;
 		default:
 			if (DEBUG)

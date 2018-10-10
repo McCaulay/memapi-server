@@ -18,6 +18,8 @@
 #define SEARCH_GET_RESULTS 12
 #define SEARCH_COUNT_RESULTS 13
 #define SEARCH_END 14
+#define ATTACH 15
+#define DETACH 16
 
 #define NO_ERROR 0
 #define NOT_CONNECTED 1

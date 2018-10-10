@@ -5,6 +5,14 @@
 #include "sysctl.h"
 #include "rpc.h"
 
+struct inputAttach {
+	int processId;
+} __attribute__((packed));
+
+struct inputDetach {
+	int processId;
+} __attribute__((packed));
+
 int getMaxProcesses(char* ip)
 {
 	// sysctl kern.maxproc not working since 1.76...
@@ -70,8 +78,49 @@ int getProcesses(char* ip, unsigned char** buffer, int* length)
 		sprintf((char*)(*buffer + *length), "%s\0", thread);
 		*length += strlen(thread) + 1;
 
-		networkSendDebugMessage("			[%s@getProcesses] Process - Id: %d, Name: %s, Thread: %s\n", ip, pid, name, thread);
+		if (DEBUG)
+			networkSendDebugMessage("			[%s@getProcesses] Process - Id: %d, Name: %s, Thread: %s\n", ip, pid, name, thread);
 	}
+
+	return NO_ERROR;
+}
+
+int attach(char* ip, unsigned char* inputBuffer, int inputLength)
+{
+	struct inputAttach input = *(struct inputAttach*)(inputBuffer + 1);
+
+	// Attach to process
+    int result = ptrace(PT_ATTACH, input.processId, NULL, NULL);
+	wait(NULL);
+
+	// Failed to attach
+	if (result != 0)
+	{
+		if (DEBUG)
+		{
+			// TODO: Output process name as well as process id. Reuse processes.c code to gather this information.
+			networkSendDebugMessage("			[%s@attach] Failed to attach to process %d\n", ip, input.processId);
+			networkSendDebugMessage("			[%s@attach] Error %d: %s\n", ip, errno, strerror(errno));
+		}
+		return FAILED_ATTACH;
+	}
+
+	// Attached
+	if (DEBUG)
+		networkSendDebugMessage("			[%s@attach] Attached to process: %d\n", ip, input.processId);
+
+	return NO_ERROR;
+}
+
+int detach(char* ip, unsigned char* inputBuffer, int inputLength)
+{
+	struct inputDetach input = *(struct inputDetach*)(inputBuffer + 1);
+
+	// Detach from process
+	ptrace(PT_DETACH, input.processId, NULL, NULL);
+
+	if (DEBUG)
+		networkSendDebugMessage("			[%s@peek] Detached from process: %d\n", ip, input.processId);
 
 	return NO_ERROR;
 }
