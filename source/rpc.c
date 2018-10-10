@@ -8,7 +8,7 @@
 void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 {
 	int error = NO_ERROR;
-	unsigned char* outputBuffer = malloc(1);
+	unsigned char* outputBuffer = malloc(sizeof(unsigned char*));
 	int outputLength = 1;
 
 	int method = (int)buffer[0];
@@ -95,7 +95,7 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 		case GET_REGIONS:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call getRegions() invoked\n", ip);
-			// error = getRegions(ip, &outputBuffer, &outputLength, buffer, length);
+			error = getRegions(ip, &outputBuffer, &outputLength, buffer, length);
 			break;
 		default:
 			if (DEBUG)

@@ -56,15 +56,11 @@ int getProcesses(char* ip, unsigned char** buffer, int* length)
 
 		// Allocate memory and retrieve data
 		void* dump = malloc(len);
-		if (sysctl(mib, 4, dump, &len, NULL, 0) == -1)
+		if (sysctl(mib, 4, dump, &len, NULL, 0) == -1 || len <= 0)
 		{
 			free(dump);
 			continue;
 		}
-
-		// Skip if no data
-		if (len <= 0)
-			continue;
 
 		char* name = dump + 0x1bf;
 		char* thread = dump + 0x18a;
