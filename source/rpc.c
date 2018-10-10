@@ -17,7 +17,7 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 		case POKE:
 			if (DEBUG)
 				networkSendDebugMessage("		[%s] Method call poke() invoked\n", ip);
-			// error = poke(ip, buffer, length);
+			error = poke(ip, buffer, length);
 			break;
 		case PEEK:
 			if (DEBUG)
