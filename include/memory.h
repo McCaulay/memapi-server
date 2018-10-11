@@ -7,8 +7,8 @@
  * --------------------
  *
  *	processId:	4 Bytes | The process id.
- *	address:	8 Bytes | The memory address you want to read.
- *	length:		4 Bytes | The number of bytes you want to read from the address.
+ *	address:	  8 Bytes | The memory address you want to read.
+ *	length:		  4 Bytes | The number of bytes you want to read from the address.
  */
 struct inputPeek;
 
@@ -17,8 +17,8 @@ struct inputPeek;
  * --------------------
  *
  *	processId:	4 Bytes | The process id.
- *	address:	8 Bytes | The memory address you want to read.
- *	length:		4 Bytes | The number of bytes you want to read from the address.
+ *	address:	  8 Bytes | The memory address you want to read.
+ *	length:		  4 Bytes | The number of bytes you want to read from the address.
  */
 struct inputPoke;
 
@@ -70,7 +70,7 @@ typedef struct {
  *
  *  returns: RPC Error code
  */
-int peek(char* ip, unsigned char** outputBuffer, int* outputLength, unsigned char* inputBuffer, int inputLength);
+uint32_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  poke
@@ -83,7 +83,7 @@ int peek(char* ip, unsigned char** outputBuffer, int* outputLength, unsigned cha
  *
  *  returns: RPC Error code
  */
-int poke(char* ip, unsigned char* inputBuffer, int inputLength);
+uint32_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  getRegions
@@ -98,7 +98,7 @@ int poke(char* ip, unsigned char* inputBuffer, int inputLength);
  *
  *  returns: RPC Error code
  */
-int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsigned char* inputBuffer, int inputLength);
+uint32_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  getVirtualMemoryMaps
@@ -112,4 +112,4 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
  *
  *  returns: 0 On success, -1 on error
  */
-int getVirtualMemoryMaps(int processId, kinfo_vmentry** entries, size_t* length);
+int32_t getVirtualMemoryMaps(uint32_t processId, kinfo_vmentry** entries, size_t* length);

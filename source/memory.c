@@ -5,22 +5,22 @@
 #include "networking.h"
 
 struct inputPeek {
-	int processId;
-	unsigned long address;
-	unsigned int length;
+	uint32_t processId;
+	uint64_t address;
+	uint32_t length;
 } __attribute__((packed));
 
 struct inputPoke {
-	int processId;
-	unsigned long address;
-	unsigned int length;
+	uint32_t processId;
+	uint64_t address;
+	uint32_t length;
 } __attribute__((packed));
 
 struct inputRegions {
-	int processId;
+	uint32_t processId;
 } __attribute__((packed));
 
-int peek(char* ip, unsigned char** outputBuffer, int* outputLength, unsigned char* inputBuffer, int inputLength)
+uint32_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputPeek input = *(struct inputPeek*)(inputBuffer + 1);
 
@@ -75,7 +75,7 @@ int peek(char* ip, unsigned char** outputBuffer, int* outputLength, unsigned cha
 	return NO_ERROR;
 }
 
-int poke(char* ip, unsigned char* inputBuffer, int inputLength)
+uint32_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputPoke input = *(struct inputPoke*)(inputBuffer + 1);
 
@@ -124,7 +124,7 @@ int poke(char* ip, unsigned char* inputBuffer, int inputLength)
 	return NO_ERROR;
 }
 
-int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsigned char* inputBuffer, int inputLength)
+uint32_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputRegions input = *(struct inputRegions*)(inputBuffer + 1);
 
@@ -141,12 +141,12 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
 	}
 
 	// Count number of entries
-	int entryCount = 0;
+	unsigned int entryCount = 0;
 
-	unsigned long entryAddress = (unsigned long)(maps);
-	unsigned long endAddress = 0;
-	unsigned long offset = 0;
-	int loopIndex = 0;
+	uint64_t entryAddress = (uint64_t)(maps);
+	uint64_t endAddress = 0;
+	uint64_t offset = 0;
+	unsigned int loopIndex = 0;
 
 	while (offset < length)
 	{
@@ -181,19 +181,19 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
 	}
 
 	if (DEBUG)
-		networkSendDebugMessage("			[%s@getRegions] Found %d memory maps\n", ip, (int)(entryCount / 2));
+		networkSendDebugMessage("			[%s@getRegions] Found %d memory maps\n", ip, (uint32_t)(entryCount / 2));
 
 	// Reallocate memory buffer
-	*outputBuffer = realloc(*outputBuffer, entryCount * sizeof(long));
+	*outputBuffer = realloc(*outputBuffer, entryCount * sizeof(uint64_t));
 
 	// Set output length
-	*outputLength = entryCount * sizeof(long);
+	*outputLength = entryCount * sizeof(uint64_t);
 
 	// Get entries
 	endAddress = 0;
 	offset = 0;
 	loopIndex = 0;
-	unsigned long bufferOffset = 0;
+	uint64_t bufferOffset = 0;
 
 	while (offset < length)
 	{
@@ -207,8 +207,8 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
 		if (loopIndex == 0)
 		{
 			// Append start
-			*(long*)(*outputBuffer + bufferOffset) = entry.kve_start;
-			bufferOffset += sizeof(long);
+			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_start;
+			bufferOffset += sizeof(uint64_t);
 			if (DEBUG)
 				networkSendDebugMessage("			[%s@getRegions] %16lx - ", ip, entry.kve_start);
 
@@ -222,14 +222,14 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
 		if (entry.kve_start > endAddress + VMMAP_GAP)
 		{
 			// Append end
-			*(long*)(*outputBuffer + bufferOffset) = endAddress;
-			bufferOffset += sizeof(long);
+			*(uint64_t*)(*outputBuffer + bufferOffset) = endAddress;
+			bufferOffset += sizeof(uint64_t);
 			if (DEBUG)
 				networkSendDebugMessage("%16lx\n", endAddress);
 
 			// Append start
-			*(long*)(*outputBuffer + bufferOffset) = entry.kve_start;
-			bufferOffset += sizeof(long);
+			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_start;
+			bufferOffset += sizeof(uint64_t);
 			if (DEBUG)
 				networkSendDebugMessage("			[%s@getRegions] %16lx - ", ip, entry.kve_start);
 		}
@@ -239,8 +239,8 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
 		if (offset >= length)
 		{
 			// Append end
-			*(long*)(*outputBuffer + bufferOffset) = entry.kve_end;
-			bufferOffset += sizeof(long);
+			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_end;
+			bufferOffset += sizeof(uint64_t);
 			if (DEBUG)
 				networkSendDebugMessage("%16lx\n", entry.kve_end);
 		}
@@ -254,9 +254,9 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
 	return NO_ERROR;
 }
 
-int getVirtualMemoryMaps(int processId, kinfo_vmentry** entries, size_t* length)
+int32_t getVirtualMemoryMaps(uint32_t processId, kinfo_vmentry** entries, size_t* length)
 {
-	int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_VMMAP, processId };
+	int32_t mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_VMMAP, processId };
 
 	// Get data length
 	if (sysctl(mib, 4, NULL, length, NULL, 0) == -1)
