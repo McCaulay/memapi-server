@@ -33,33 +33,6 @@ struct inputPoke;
 struct inputRegions;
 
 /*
- * Struct:  kinfo_vmentry
- */
-typedef struct {
-  int      kve_structsize;                /* Variable size of record. */
-  int      kve_type;                      /* Type of map entry. */
-  uint64_t kve_start;                     /* Starting address. */
-  uint64_t kve_end;                       /* Finishing address. */
-  uint64_t kve_offset;                    /* Mapping offset in object */
-  uint64_t kve_vn_fileid;                 /* inode number if vnode */
-  uint32_t kve_vn_fsid;                   /* dev_t of vnode location */
-  int      kve_flags;                     /* Flags on map entry. */
-  int      kve_resident;                  /* Number of resident pages. */
-  int      kve_private_resident;          /* Number of private pages. */
-  int      kve_protection;                /* Protection bitmask. */
-  int      kve_ref_count;                 /* VM obj ref count. */
-  int      kve_shadow_count;              /* VM obj shadow count. */
-  int      kve_vn_type;                   /* Vnode type. */
-  uint64_t kve_vn_size;                   /* File size. */
-  uint32_t kve_vn_rdev;                   /* Device id if device. */
-  uint16_t kve_vn_mode;                   /* File mode. */
-  uint16_t kve_status;                    /* Status flags. */
-  int      _kve_ispare[12];               /* Space for more stuff. */
-  /* Truncated before copyout in sysctl */
-  char     kve_path[256];            /* Path to VM obj, if any. */
-} kinfo_vmentry;
-
-/*
  * Function:  peek
  * --------------------
  * Read data from memory for a given process.
