@@ -140,8 +140,6 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
 			networkSendDebugMessage("			[%s@getRegions] Failed to get virtual memory maps\n", ip);
 	}
 
-	networkSendDebugMessage("			[%s@getRegions] Virtual Memory: %d\n", ip, length);
-
 	// Count number of entries
 	int entryCount = 0;
 
@@ -212,7 +210,7 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
 			*(long*)(*outputBuffer + bufferOffset) = entry.kve_start;
 			bufferOffset += sizeof(long);
 			if (DEBUG)
-				networkSendDebugMessage("			[%s@getRegions] %08x - ", ip, entry.kve_start);
+				networkSendDebugMessage("			[%s@getRegions] %16lx - ", ip, entry.kve_start);
 
 			endAddress = entry.kve_end;
 			loopIndex++;
@@ -227,13 +225,13 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
 			*(long*)(*outputBuffer + bufferOffset) = endAddress;
 			bufferOffset += sizeof(long);
 			if (DEBUG)
-				networkSendDebugMessage("%08x\n", endAddress);
+				networkSendDebugMessage("%16lx\n", endAddress);
 
 			// Append start
 			*(long*)(*outputBuffer + bufferOffset) = entry.kve_start;
 			bufferOffset += sizeof(long);
 			if (DEBUG)
-				networkSendDebugMessage("			[%s@getRegions] %08x - ", ip, entry.kve_start);
+				networkSendDebugMessage("			[%s@getRegions] %16lx - ", ip, entry.kve_start);
 		}
 		endAddress = entry.kve_end;
 
@@ -244,7 +242,7 @@ int getRegions(char* ip, unsigned char** outputBuffer, int* outputLength, unsign
 			*(long*)(*outputBuffer + bufferOffset) = entry.kve_end;
 			bufferOffset += sizeof(long);
 			if (DEBUG)
-				networkSendDebugMessage("%08x\n", entry.kve_end);
+				networkSendDebugMessage("%16lx\n", entry.kve_end);
 		}
 
 		loopIndex++;
