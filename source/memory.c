@@ -29,6 +29,10 @@ uint8_t peek(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* output
 		networkSendDebugMessage("			[%s@peek] Process Id: %d, Address: 0x%08x, Length: %d\n", client->ip, input.processId, input.address, input.length);
 	#endif
 
+	// Ensure memory address is valid
+	if (!isAddressRangeValid(client, input.processId, input.address, input.address + input.length))
+		return INVALID_ADDRESS;
+
 	// Reallocate memory buffer
 	*outputBuffer = realloc(*outputBuffer, input.length);
 
@@ -83,6 +87,10 @@ uint8_t poke(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLeng
 	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@poke] Process Id: %d, Address: 0x%08x, Length: %d\n", client->ip, input.processId, input.address, input.length);
 	#endif
+
+	// Ensure memory address is valid
+	if (!isAddressRangeValid(client, input.processId, input.address, input.address + input.length))
+		return INVALID_ADDRESS;
 
 	// Write buffer into memory into
 	struct ptrace_io_desc ptDesc;
@@ -259,6 +267,39 @@ uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* 
 	free(maps);
 
 	return NO_ERROR;
+}
+
+bool isAddressRangeValid(struct clientArgs* client, uint32_t processId, uint64_t start, uint64_t end)
+{
+	size_t length = 0;
+	kinfo_vmentry* maps = malloc(sizeof(kinfo_vmentry*));
+	if (getVirtualMemoryMaps(processId, &maps, &length) == -1)
+	{
+		#ifdef DEBUG
+			networkSendDebugMessage("			[%s@isAddressRangeValid] Failed to get virtual memory maps\n", client->ip);
+		#endif
+	}
+
+	// Loop entries
+	uint64_t entryAddress = (uint64_t)(maps);
+	uint64_t offset = 0;
+
+	while (offset < length)
+	{
+		kinfo_vmentry entry = *(kinfo_vmentry*)(entryAddress + offset);
+
+		offset += entry.kve_structsize;
+
+		if (entry.kve_structsize == 0)
+			break;
+
+		if (start >= entry.kve_start && end <= entry.kve_end)
+			return true;
+	}
+
+	// Clean up allocate memory
+	free(maps);
+	return false;
 }
 
 int32_t getVirtualMemoryMaps(uint32_t processId, kinfo_vmentry** entries, size_t* length)

@@ -37,7 +37,7 @@ struct inputRegions;
  * --------------------
  * Read data from memory for a given process.
  *
- *	client:				The client data.
+ *	client:			The client data.
  *	outputBuffer:	The buffer to put the peeked data into.
  *	outputLength:	The length variable to put the length of the peeked data into.
  *	inputBuffer:	The input buffer containing the arguments. (Process, Address, Length)
@@ -52,7 +52,7 @@ uint8_t peek(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* output
  * --------------------
  * Write data to memory for a given process.
  *
- *  client:       The client data.
+ *  client:       	The client data.
  *	inputBuffer:	The input buffer containing the arguments. (Process, Address, Length, Data)
  *	inputLength:	The total length of the input buffer.
  *
@@ -65,7 +65,7 @@ uint8_t poke(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLeng
  * --------------------
  * Get the memory regions for a given process.
  *
- *  client:       The client data.
+ *  client:       	The client data.
  *	outputBuffer:	The buffer to put the regions into.
  *	outputLength:	The length variable to put the length of the regions into.
  *	inputBuffer:	The input buffer containing the arguments. (Process)
@@ -74,6 +74,20 @@ uint8_t poke(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLeng
  *  returns: RPC Error code
  */
 uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
+
+/*
+ * Function:  isAddressRangeValid
+ * --------------------
+ * Check if the given memory address range is valid for this process.
+ *
+ *  client:      The client data.
+ *	processId:	The process id.
+ *	start:		The start address of the range.
+ *	end:		The end address of the range.
+ *
+ *  returns: true/false
+ */
+bool isAddressRangeValid(struct clientArgs* client, uint32_t processId, uint64_t start, uint64_t end);
 
 /*
  * Function:  getVirtualMemoryMaps
