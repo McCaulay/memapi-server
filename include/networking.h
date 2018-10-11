@@ -111,7 +111,7 @@ do {\
  *
  *  returns: Error status
  */
-int networkReceiveData(int socket, unsigned char* buffer, int size);
+int networkReceiveData(int socket, uint8_t* buffer, int32_t size);
 
 /*
  * Function:  networkSendData
@@ -124,7 +124,7 @@ int networkReceiveData(int socket, unsigned char* buffer, int size);
  *
  *  returns: Error status
  */
-int networkSendData(int socket, unsigned char* buffer, int size);
+int networkSendData(int socket, uint8_t* buffer, int32_t size);
 
 /*
  * Function:  networkSendDebugData
@@ -136,7 +136,7 @@ int networkSendData(int socket, unsigned char* buffer, int size);
  *
  *  returns: Error status
  */
-int networkSendDebugData(unsigned char* buffer, int size);
+int networkSendDebugData(uint8_t* buffer, int32_t size);
 
 /*
  * Function:  networkCloseConnection

@@ -60,17 +60,17 @@ void networkOpenDebugConnection(const char *ip, uint16_t port)
 	debugSocket = networkOpenConnection("debug", ip, port);
 }
 
-int networkReceiveData(int socket, unsigned char* buffer, int size)
+int networkReceiveData(int socket, uint8_t* buffer, int32_t size)
 {
 	return sceNetRecv(socket, buffer, size, 0);
 }
 
-int networkSendData(int socket, unsigned char* buffer, int size)
+int networkSendData(int socket, uint8_t* buffer, int32_t size)
 {
 	return sceNetSend(socket, buffer, size, 0);
 }
 
-int networkSendDebugData(unsigned char* buffer, int size)
+int networkSendDebugData(uint8_t* buffer, int32_t size)
 {
 	return networkSendData(debugSocket, buffer, size);
 }
