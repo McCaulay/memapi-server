@@ -38,14 +38,40 @@ size_t getMaxProcesses(char* ip)
 
 uint8_t getProcesses(char* ip, uint8_t** buffer, uint32_t* length)
 {
-	//Re-allocate buffer
-	*buffer = realloc(*buffer, 16384);
-	*length = 0;
-
 	size_t max = getMaxProcesses(ip);
 
 	int32_t mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, 0 };
 	size_t len;
+
+	// Calculate buffer size
+	for (int32_t pid = 0; pid < max; pid++)
+	{
+		// Get data length
+		mib[3] = pid;
+		if (sysctl(mib, 4, NULL, &len, NULL, 0) == -1)
+			continue;
+
+		// Allocate memory and retrieve data
+		void* dump = malloc(len);
+		if (sysctl(mib, 4, dump, &len, NULL, 0) == -1 || len <= 0)
+		{
+			free(dump);
+			continue;
+		}
+
+		char* name = dump + 0x1bf;
+		char* thread = dump + 0x18a;
+
+		*length += sizeof(int32_t);
+		*length += strlen(name) + 1;
+		*length += strlen(thread) + 1;
+
+		free(dump);
+	}
+
+	//Re-allocate buffer
+	*buffer = realloc(*buffer, *length);
+	*length = 0;
 
 	for (int32_t pid = 0; pid < max; pid++)
 	{
@@ -76,6 +102,8 @@ uint8_t getProcesses(char* ip, uint8_t** buffer, uint32_t* length)
 
 		if (DEBUG)
 			networkSendDebugMessage("			[%s@getProcesses] Process - Id: %d, Name: %s, Thread: %s\n", ip, pid, name, thread);
+
+		free(dump);
 	}
 
 	return NO_ERROR;

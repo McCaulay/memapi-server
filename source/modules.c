@@ -7,11 +7,6 @@
 
 uint8_t getModules(char* ip, uint8_t** buffer, uint32_t* length)
 {
-	//Re-allocate buffer
-	*buffer = realloc(*buffer, 16384);
-
-	*length = 0;
-
 	int32_t modules[MAX_MODULES];
 	int32_t moduleCount = 0;
 
@@ -19,6 +14,21 @@ uint8_t getModules(char* ip, uint8_t** buffer, uint32_t* length)
 
 	if (DEBUG)
 		networkSendDebugMessage("			[%s@getModules] Found %d modules\n", ip, moduleCount);
+
+	// Calculate buffer size
+	for (int i = 0; i < moduleCount; i++)
+	{
+		struct moduleInfo info;
+		getModuleInfo(modules[i], &info);
+		*length += sizeof(int32_t);
+		*length += strlen(info.name) + 1;
+		*length += sizeof(uint64_t);
+		*length += sizeof(uint64_t);
+	}
+
+	//Re-allocate buffer
+	*buffer = realloc(*buffer, *length);
+	*length = 0;
 
 	for (int i = 0; i < moduleCount; i++)
 	{
