@@ -5,13 +5,13 @@
 #include "modules.h"
 #include "processes.h"
 
-void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
+void handleRpc(int socket, char* ip, uint8_t* buffer, uint32_t length)
 {
-	int error = NO_ERROR;
-	unsigned char* outputBuffer = malloc(sizeof(unsigned char*));
-	int outputLength = 1;
+	uint8_t error = NO_ERROR;
+	uint8_t* outputBuffer = malloc(sizeof(uint8_t*));
+	uint32_t outputLength = 1;
 
-	int method = (int)buffer[0];
+	uint8_t method = buffer[0];
 	switch (method)
 	{
 		/*
@@ -108,7 +108,7 @@ void handleRpc(int socket, char* ip, unsigned char* buffer, int length)
 		networkSendDebugMessage("		[%s] RPC Error %d\n", ip, error);
 	
 	// Format response
-	unsigned char* outputBufferFull = malloc(outputLength + 1);
+	uint8_t* outputBufferFull = malloc(outputLength + 1);
 	outputBufferFull[0] = error; // First byte is always error byte
 	memcpy(&outputBufferFull[1], outputBuffer, outputLength);
 

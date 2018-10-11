@@ -5,15 +5,15 @@
 #include "sysctl.h"
 #include "rpc.h"
 
-int getModules(char* ip, unsigned char** buffer, int* length)
+uint8_t getModules(char* ip, uint8_t** buffer, uint32_t* length)
 {
 	//Re-allocate buffer
 	*buffer = realloc(*buffer, 16384);
 
 	*length = 0;
 
-	int modules[MAX_MODULES];
-	int moduleCount = 0;
+	int32_t modules[MAX_MODULES];
+	int32_t moduleCount = 0;
 
 	getLoadedModules(&modules[0], MAX_MODULES, &moduleCount);
 
@@ -25,17 +25,17 @@ int getModules(char* ip, unsigned char** buffer, int* length)
 		struct moduleInfo info;
 		getModuleInfo(modules[i], &info);
 
-		*(int*)(*buffer + *length) = modules[i];
-		*length += sizeof(int);
+		*(int32_t*)(*buffer + *length) = modules[i];
+		*length += sizeof(int32_t);
 
 		sprintf((char*)(*buffer + *length), "%s\0", info.name);
 		*length += strlen(info.name) + 1;
 
-		*(long*)(*buffer + *length) = info.codeSize;
-		*length += sizeof(long);
+		*(uint64_t*)(*buffer + *length) = info.codeSize;
+		*length += sizeof(uint64_t);
 
-		*(long*)(*buffer + *length) = info.dataSize;
-		*length += sizeof(long);
+		*(uint64_t*)(*buffer + *length) = info.dataSize;
+		*length += sizeof(uint64_t);
 
 		if (DEBUG)
 			networkSendDebugMessage("			[%s@getModules] Module - Id: %d, Name: %s, Code Size: 0x%x, Data Size: 0x%x\n", ip, modules[i], info.name, info.codeSize, info.dataSize);

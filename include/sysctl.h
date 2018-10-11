@@ -216,4 +216,4 @@
  *
  *  returns: RPC Error code
  */
-int getFirmware(char* ip, unsigned char** firmware, int* length);
+uint8_t getFirmware(char* ip, uint8_t** firmware, uint32_t* length);

@@ -4,10 +4,10 @@
 #include "sysctl.h"
 #include "rpc.h"
 
-int getFirmware(char* ip, unsigned char** firmware, int* length)
+uint8_t getFirmware(char* ip, uint8_t** firmware, uint32_t* length)
 {
 	size_t len = 0;
-	int mib[2] = { CTL_KERN, SDK_VERSION };
+	int32_t mib[2] = { CTL_KERN, SDK_VERSION };
 	if (sysctl(mib, 2, NULL, &len, NULL, 0) != 0)
 		return CTL_ERROR;
 

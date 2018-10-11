@@ -39,7 +39,7 @@ int getMaxProcesses(char* ip);
  *
  *  returns: RPC Error code
  */
-int getProcesses(char* ip, unsigned char** buffer, int* length);
+uint8_t getProcesses(char* ip, uint8_t** buffer, uint32_t* length);
 
 /*
  * Function:  attach
@@ -52,7 +52,7 @@ int getProcesses(char* ip, unsigned char** buffer, int* length);
  *
  *  returns: RPC Error code
  */
-int attach(char* ip, unsigned char* inputBuffer, int inputLength);
+uint8_t attach(char* ip, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  detach
@@ -65,4 +65,4 @@ int attach(char* ip, unsigned char* inputBuffer, int inputLength);
  *
  *  returns: RPC Error code
  */
-int detach(char* ip, unsigned char* inputBuffer, int inputLength);
+uint8_t detach(char* ip, uint8_t* inputBuffer, uint32_t inputLength);

@@ -70,7 +70,7 @@ typedef struct {
  *
  *  returns: RPC Error code
  */
-uint32_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
+uint8_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  poke
@@ -83,7 +83,7 @@ uint32_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t*
  *
  *  returns: RPC Error code
  */
-uint32_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength);
+uint8_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  getRegions
@@ -98,7 +98,7 @@ uint32_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength);
  *
  *  returns: RPC Error code
  */
-uint32_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
+uint8_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  getVirtualMemoryMaps

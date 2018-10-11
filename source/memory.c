@@ -20,7 +20,7 @@ struct inputRegions {
 	uint32_t processId;
 } __attribute__((packed));
 
-uint32_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
+uint8_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputPeek input = *(struct inputPeek*)(inputBuffer + 1);
 
@@ -75,7 +75,7 @@ uint32_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t*
 	return NO_ERROR;
 }
 
-uint32_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
+uint8_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputPoke input = *(struct inputPoke*)(inputBuffer + 1);
 
@@ -124,7 +124,7 @@ uint32_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
 	return NO_ERROR;
 }
 
-uint32_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
+uint8_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputRegions input = *(struct inputRegions*)(inputBuffer + 1);
 

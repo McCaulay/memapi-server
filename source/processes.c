@@ -6,19 +6,19 @@
 #include "rpc.h"
 
 struct inputAttach {
-	int processId;
+	uint32_t processId;
 } __attribute__((packed));
 
 struct inputDetach {
-	int processId;
+	uint32_t processId;
 } __attribute__((packed));
 
-int getMaxProcesses(char* ip)
+size_t getMaxProcesses(char* ip)
 {
 	// sysctl kern.maxproc not working since 1.76...
 	return 1000;
 
-	int max = 0;
+	size_t max = 0;
 	int mib[2] = { CTL_KERN, KERN_MAXPROC };
 	size_t len = sizeof(max);
 
@@ -36,18 +36,18 @@ int getMaxProcesses(char* ip)
 	}
 }
 
-int getProcesses(char* ip, unsigned char** buffer, int* length)
+uint8_t getProcesses(char* ip, uint8_t** buffer, uint32_t* length)
 {
 	//Re-allocate buffer
 	*buffer = realloc(*buffer, 16384);
 	*length = 0;
 
-	int max = getMaxProcesses(ip);
+	size_t max = getMaxProcesses(ip);
 
-	int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, 0 };
+	int32_t mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, 0 };
 	size_t len;
 
-	for (int pid = 0; pid < max; pid++)
+	for (int32_t pid = 0; pid < max; pid++)
 	{
 		// Get data length
 		mib[3] = pid;
@@ -65,8 +65,8 @@ int getProcesses(char* ip, unsigned char** buffer, int* length)
 		char* name = dump + 0x1bf;
 		char* thread = dump + 0x18a;
 
-		*(int*)(*buffer + *length) = pid;
-		*length += sizeof(int);
+		*(int32_t*)(*buffer + *length) = pid;
+		*length += sizeof(int32_t);
 
 		sprintf((char*)(*buffer + *length), "%s\0", name);
 		*length += strlen(name) + 1;
@@ -81,7 +81,7 @@ int getProcesses(char* ip, unsigned char** buffer, int* length)
 	return NO_ERROR;
 }
 
-int attach(char* ip, unsigned char* inputBuffer, int inputLength)
+uint8_t attach(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputAttach input = *(struct inputAttach*)(inputBuffer + 1);
 
@@ -108,7 +108,7 @@ int attach(char* ip, unsigned char* inputBuffer, int inputLength)
 	return NO_ERROR;
 }
 
-int detach(char* ip, unsigned char* inputBuffer, int inputLength)
+uint8_t detach(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputDetach input = *(struct inputDetach*)(inputBuffer + 1);
 

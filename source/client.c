@@ -12,8 +12,8 @@ void *client(void* args)
 	if (DEBUG)
 		networkSendDebugMessage("		[%s] Thread created\n", ip);
 
-	int readSize = 0;
-	unsigned char buffer[512];
+	uint32_t readSize = 0;
+	uint8_t buffer[512];
 	while ((readSize = networkReceiveData((int)socket, buffer, 512)) > 0)
 	{
 		// Handle buffer

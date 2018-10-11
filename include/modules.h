@@ -13,4 +13,4 @@
  *
  *  returns: RPC Error code
  */
-int getModules(char* ip, unsigned char** buffer, int* length);
+uint8_t getModules(char* ip, uint8_t** buffer, uint32_t* length);

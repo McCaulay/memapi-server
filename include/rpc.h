@@ -44,4 +44,4 @@
  *
  *  returns: void
  */
-void handleRpc(int socket, char* ip, unsigned char* buffer, int length);
+void handleRpc(int socket, char* ip, uint8_t* buffer, uint32_t length);
