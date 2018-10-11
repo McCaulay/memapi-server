@@ -23,9 +23,10 @@ uint8_t getFirmware(struct clientArgs* client, uint8_t** firmware, uint32_t* len
 	sprintf((char*)(*firmware), "%d.%02d", version[2], version[3]);
 
 	*length = strlen((char*)(*firmware));
-	
-	if (DEBUG)
+
+	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@getFirmware] Firmware: %s\n", client->ip, (char*)(*firmware));
+	#endif
 
 	free(version);
 	version = NULL;

@@ -12,8 +12,9 @@ uint8_t getModules(struct clientArgs* client, uint8_t** buffer, uint32_t* length
 
 	getLoadedModules(&modules[0], MAX_MODULES, &moduleCount);
 
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@getModules] Found %d modules\n", client->ip, moduleCount);
+	#endif
 
 	// Calculate buffer size
 	for (int i = 0; i < moduleCount; i++)
@@ -47,8 +48,9 @@ uint8_t getModules(struct clientArgs* client, uint8_t** buffer, uint32_t* length
 		*(uint64_t*)(*buffer + *length) = info.dataSize;
 		*length += sizeof(uint64_t);
 
-		if (DEBUG)
+		#ifdef DEBUG
 			networkSendDebugMessage("			[%s@getModules] Module - Id: %d, Name: %s, Code Size: 0x%x, Data Size: 0x%x\n", client->ip, modules[i], info.name, info.codeSize, info.dataSize);
+		#endif
 	}
 
 	return NO_ERROR;

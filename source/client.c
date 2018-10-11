@@ -6,25 +6,26 @@
 
 void *client(void* args)
 {
-	char* ip = ((struct clientArgs*)args)->ip;
-	int socket = ((struct clientArgs*)args)->socket;
+	struct clientArgs* cArgs = (struct clientArgs*)args;
 
-	if (DEBUG)
-		networkSendDebugMessage("		[%s] Thread created\n", ip);
+	#ifdef DEBUG
+		networkSendDebugMessage("		[%s] Thread created\n", cArgs->ip);
+	#endif
 
 	uint32_t readSize = 0;
 	uint8_t buffer[512];
-	while ((readSize = networkReceiveData((int)socket, buffer, 512)) > 0)
+	while ((readSize = networkReceiveData(cArgs->socket, buffer, 512)) > 0)
 	{
 		// Handle buffer
-		handleRpc((struct clientArgs*)args, buffer, readSize);
+		handleRpc(cArgs, buffer, readSize);
 		memset(buffer, 0, 512);
 	}
 
-	if (DEBUG)
-		networkSendDebugMessage("		[%s] Connection disconnected\n", ip);
+	#ifdef DEBUG
+		networkSendDebugMessage("		[%s] Connection disconnected\n", cArgs->ip);
+	#endif
 
-	networkCloseConnection(socket);
+	networkCloseConnection(cArgs->socket);
 	free(args);
 	return NULL;
 }

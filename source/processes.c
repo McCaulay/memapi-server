@@ -24,14 +24,16 @@ size_t getMaxProcesses(struct clientArgs* client)
 
 	if(sysctl(mib, 2, (void*)&max, &len, NULL, 0) != -1)
 	{
-		if (DEBUG)
+		#ifdef DEBUG
 			networkSendDebugMessage("			[%s@getMaxProcesses] Max Processes:  %d\n", client->ip, max);
+		#endif
 		return max;
 	}
 	else
 	{
-		if (DEBUG)
+		#ifdef DEBUG
 			networkSendDebugMessage("			[%s@getMaxProcesses] Error %d:  %s\n", client->ip, errno, strerror(errno));
+		#endif
 		return 0;
 	}
 }
@@ -100,8 +102,9 @@ uint8_t getProcesses(struct clientArgs* client, uint8_t** buffer, uint32_t* leng
 		sprintf((char*)(*buffer + *length), "%s\0", thread);
 		*length += strlen(thread) + 1;
 
-		if (DEBUG)
+		#ifdef DEBUG
 			networkSendDebugMessage("			[%s@getProcesses] Process - Id: %d, Name: %s, Thread: %s\n", client->ip, pid, name, thread);
+		#endif
 
 		free(dump);
 	}
@@ -120,18 +123,18 @@ uint8_t attach(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLe
 	// Failed to attach
 	if (result != 0)
 	{
-		if (DEBUG)
-		{
+		#ifdef DEBUG
 			// TODO: Output process name as well as process id. Reuse processes.c code to gather this information.
 			networkSendDebugMessage("			[%s@attach] Failed to attach to process %d\n", client->ip, input.processId);
 			networkSendDebugMessage("			[%s@attach] Error %d: %s\n", client->ip, errno, strerror(errno));
-		}
+		#endif
 		return FAILED_ATTACH;
 	}
 
 	// Attached
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@attach] Attached to process: %d\n", client->ip, input.processId);
+	#endif
 
 	return NO_ERROR;
 }
@@ -143,8 +146,9 @@ uint8_t detach(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLe
 	// Detach from process
 	ptrace(PT_DETACH, input.processId, NULL, NULL);
 
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@peek] Detached from process: %d\n", client->ip, input.processId);
+	#endif
 
 	return NO_ERROR;
 }

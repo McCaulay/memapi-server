@@ -41,31 +41,6 @@ int networkListen(const char * name, uint16_t port);
 int networkAccept(int socket, struct sockaddr *address);
 
 /*
- * Function:  networkOpenConnection
- * --------------------
- * Opens a connection over the network to the socket.
- *
- *  name:	The network socket name.
- *	ip:		The ip address of the device you are connecting to.
- *	port:	The port number you are communicating over.
- *
- *  returns: socket
- */
-int networkOpenConnection(const char * name, const char *ip, uint16_t port);
-
-/*
- * Function:  networkOpenDebugConnection
- * --------------------
- * Opens a connection over the network to the debug socket.
- *
- *	ip:		The ip address of the device you are connecting to.
- *	port:	The port number you are communicating over.
- *
- *  returns: void
- */
-void networkOpenDebugConnection(const char *ip, uint16_t port);
-
-/*
  * Function:  networkSendMessage
  * --------------------
  * Sends a string message over the network to the socket.
@@ -81,23 +56,6 @@ do {\
 	char buffer[512];\
 	int size = sprintf(buffer, format, ##__VA_ARGS__);\
 	sceNetSend(socket, buffer, size, 0);\
-} while(0)
-
-/*
- * Function:  networkSendDebugMessage
- * --------------------
- * Sends a string message over the network to the debug socket.
- *
- *	format: The string to send, which can be formatted the same as printf.
- *	...:	Additional arguments to be formatted, see printf for more information.
- *
- *  returns: void
- */
-#define networkSendDebugMessage(format, ...)\
-do {\
-	char buffer[512];\
-	int size = sprintf(buffer, format, ##__VA_ARGS__);\
-	sceNetSend(debugSocket, buffer, size, 0);\
 } while(0)
 
 /*
@@ -127,6 +85,62 @@ int networkReceiveData(int socket, uint8_t* buffer, int32_t size);
 int networkSendData(int socket, uint8_t* buffer, int32_t size);
 
 /*
+ * Function:  networkCloseConnection
+ * --------------------
+ * Closes the network connection for the given socket.
+ *
+ *  socket: The network socket that should be closed.
+ *
+ *  returns: Error status.
+ */
+int networkCloseConnection(int socket);
+
+// Debug Functions
+#ifdef DEBUG
+
+/*
+ * Function:  networkOpenConnection
+ * --------------------
+ * Opens a connection over the network to the socket.
+ *
+ *  name:	The network socket name.
+ *	ip:		The ip address of the device you are connecting to.
+ *	port:	The port number you are communicating over.
+ *
+ *  returns: socket
+ */
+int networkOpenConnection(const char * name, const char *ip, uint16_t port);
+
+/*
+ * Function:  networkOpenDebugConnection
+ * --------------------
+ * Opens a connection over the network to the debug socket.
+ *
+ *	ip:		The ip address of the device you are connecting to.
+ *	port:	The port number you are communicating over.
+ *
+ *  returns: void
+ */
+void networkOpenDebugConnection(const char *ip, uint16_t port);
+
+/*
+ * Function:  networkSendDebugMessage
+ * --------------------
+ * Sends a string message over the network to the debug socket.
+ *
+ *	format: The string to send, which can be formatted the same as printf.
+ *	...:	Additional arguments to be formatted, see printf for more information.
+ *
+ *  returns: void
+ */
+#define networkSendDebugMessage(format, ...)\
+do {\
+	char buffer[512];\
+	int size = sprintf(buffer, format, ##__VA_ARGS__);\
+	sceNetSend(debugSocket, buffer, size, 0);\
+} while(0)
+
+/*
  * Function:  networkSendDebugData
  * --------------------
  * Sends data over the network to the debug socket.
@@ -139,17 +153,6 @@ int networkSendData(int socket, uint8_t* buffer, int32_t size);
 int networkSendDebugData(uint8_t* buffer, int32_t size);
 
 /*
- * Function:  networkCloseConnection
- * --------------------
- * Closes the network connection for the given socket.
- *
- *  socket: The network socket that should be closed.
- *
- *  returns: Error status.
- */
-int networkCloseConnection(int socket);
-
-/*
  * Function:  networkCloseDebugConnection
  * --------------------
  * Closes the network connection for the debug socket.
@@ -157,3 +160,5 @@ int networkCloseConnection(int socket);
  *  returns: Error status.
  */
 int networkCloseDebugConnection();
+
+#endif

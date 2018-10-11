@@ -25,8 +25,9 @@ uint8_t peek(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* output
 	struct inputPeek input = *(struct inputPeek*)(inputBuffer + 1);
 
 	// Debug Information
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@peek] Process Id: %d, Address: 0x%08x, Length: %d\n", client->ip, input.processId, input.address, input.length);
+	#endif
 
 	// Reallocate memory buffer
 	*outputBuffer = realloc(*outputBuffer, input.length);
@@ -42,8 +43,7 @@ uint8_t peek(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* output
 	ptDesc.piod_op = PIOD_READ_D;
 	ptrace(PT_IO, input.processId, &ptDesc, 0);
 	
-	if (DEBUG)
-	{
+	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@peek] Read %d bytes from process %d\n", client->ip, input.length, input.processId);
 
 		int bytesToShow = (input.length > 0x10 ? 0x10 : input.length); // Limit 16
@@ -70,7 +70,7 @@ uint8_t peek(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* output
 
 		// Free Message
 		free(msg);
-	}
+	#endif
 
 	return NO_ERROR;
 }
@@ -80,8 +80,9 @@ uint8_t poke(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLeng
 	struct inputPoke input = *(struct inputPoke*)(inputBuffer + 1);
 
 	// Debug Information
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@poke] Process Id: %d, Address: 0x%08x, Length: %d\n", client->ip, input.processId, input.address, input.length);
+	#endif
 
 	// Write buffer into memory into
 	struct ptrace_io_desc ptDesc;
@@ -91,8 +92,7 @@ uint8_t poke(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLeng
 	ptDesc.piod_op = PIOD_WRITE_D;
 	ptrace(PT_IO, input.processId, &ptDesc, 0);
 
-	if (DEBUG)
-	{
+	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@poke] Wrote %d bytes to process %d\n", client->ip, input.length, input.processId);
 
 		int bytesToShow = (input.length > 0x10 ? 0x10 : input.length); // Limit 16
@@ -119,7 +119,7 @@ uint8_t poke(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLeng
 
 		// Free Message
 		free(msg);
-	}
+	#endif
 	
 	return NO_ERROR;
 }
@@ -129,15 +129,17 @@ uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* 
 	struct inputRegions input = *(struct inputRegions*)(inputBuffer + 1);
 
 	// Debug Information
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@getRegions] Process Id: %d\n", client->ip, input.processId);
+	#endif
 
 	size_t length = 0;
 	kinfo_vmentry* maps = malloc(sizeof(kinfo_vmentry*));
 	if (getVirtualMemoryMaps(input.processId, &maps, &length) == -1)
 	{
-		if (DEBUG)
+		#ifdef DEBUG
 			networkSendDebugMessage("			[%s@getRegions] Failed to get virtual memory maps\n", client->ip);
+		#endif
 	}
 
 	// Count number of entries
@@ -180,8 +182,9 @@ uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* 
 		loopIndex++;
 	}
 
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@getRegions] Found %d memory maps\n", client->ip, (uint32_t)(entryCount / 2));
+	#endif
 
 	// Reallocate memory buffer
 	*outputBuffer = realloc(*outputBuffer, entryCount * sizeof(uint64_t));
@@ -209,8 +212,9 @@ uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* 
 			// Append start
 			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_start;
 			bufferOffset += sizeof(uint64_t);
-			if (DEBUG)
+			#ifdef DEBUG
 				networkSendDebugMessage("			[%s@getRegions] %16lx - ", client->ip, entry.kve_start);
+			#endif
 
 			endAddress = entry.kve_end;
 			loopIndex++;
@@ -224,14 +228,16 @@ uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* 
 			// Append end
 			*(uint64_t*)(*outputBuffer + bufferOffset) = endAddress;
 			bufferOffset += sizeof(uint64_t);
-			if (DEBUG)
+			#ifdef DEBUG
 				networkSendDebugMessage("%16lx\n", endAddress);
+			#endif
 
 			// Append start
 			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_start;
 			bufferOffset += sizeof(uint64_t);
-			if (DEBUG)
+			#ifdef DEBUG
 				networkSendDebugMessage("			[%s@getRegions] %16lx - ", client->ip, entry.kve_start);
+			#endif
 		}
 		endAddress = entry.kve_end;
 
@@ -241,8 +247,9 @@ uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* 
 			// Append end
 			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_end;
 			bufferOffset += sizeof(uint64_t);
-			if (DEBUG)
+			#ifdef DEBUG
 				networkSendDebugMessage("%16lx\n", entry.kve_end);
+			#endif
 		}
 
 		loopIndex++;

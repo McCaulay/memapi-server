@@ -7,26 +7,31 @@ int listenPort = 9023;
 
 void *server(void* args)
 {
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("	[+] Server thread created\n");
+	#endif
 
 	// Listen on port
 	int serverSocket = networkListen("server", listenPort);
 	if (serverSocket == -1)
 	{
-		networkSendDebugMessage("	[+] Failed to listen on port %d\n", listenPort);
-		networkSendDebugMessage("	[+] Fatal Error: %s\n", strerror(errno));
+		#ifdef DEBUG
+			networkSendDebugMessage("	[+] Failed to listen on port %d\n", listenPort);
+			networkSendDebugMessage("	[+] Fatal Error: %s\n", strerror(errno));
+		#endif
 		return NULL;
 	}
 
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("	[+] Server listening on port %d\n", listenPort);
+	#endif
 	
 	// Keep accepting client connections
 	while (true)
 	{
-		if (DEBUG)
+		#ifdef DEBUG
 			networkSendDebugMessage("	[+] Server waiting for incoming connection...\n");
+		#endif
 
 		struct sockaddr_in clientAddress;
 
@@ -34,8 +39,10 @@ void *server(void* args)
 		int clientSocket = networkAccept(serverSocket, (struct sockaddr *)&clientAddress);
 		if (clientSocket == -1)
 		{
-			networkSendDebugMessage("	[+] Failed to accept client\n");
-			networkSendDebugMessage("	[+] Fatal Error: %s\n", strerror(errno));
+			#ifdef DEBUG
+				networkSendDebugMessage("	[+] Failed to accept client\n");
+				networkSendDebugMessage("	[+] Fatal Error: %s\n", strerror(errno));
+			#endif
 			return NULL;
 		}
 
@@ -43,8 +50,9 @@ void *server(void* args)
 		char ip[INET_ADDRSTRLEN];
 		sceNetInetNtop(AF_INET, &(clientAddress.sin_addr.s_addr), ip, INET_ADDRSTRLEN);
 
-		if (DEBUG)
+		#ifdef DEBUG
 			networkSendDebugMessage("		[%s] Connection accepted\n", ip);
+		#endif
 
 		// Build data to send to thread
 		struct clientArgs *clientParams = (struct clientArgs*)malloc(sizeof(struct clientArgs));

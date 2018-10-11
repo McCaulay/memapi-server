@@ -20,17 +20,21 @@ int _main(void) {
 	initPthread();
 	initModule();
 
+	// Open Debug Connection
+	#ifdef DEBUG
+		networkOpenDebugConnection(DEBUG_IP, DEBUG_PORT);
+	#endif
+
 	// Escalate privileges to root
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("[+] Escalating privileges to root...\n");
+	#endif
 	kexec(&getRoot, NULL);
 
-	// Open Debug Connection
-	if (DEBUG)
-	{
-		networkOpenDebugConnection(DEBUG_IP, DEBUG_PORT);
+	// Starting server message
+	#ifdef DEBUG
 		networkSendDebugMessage("[+] Server starting...\n[+] Process id: %d\n", syscall(20));
-	}
+	#endif
 
 	ScePthread thread;
 	scePthreadCreate(&thread, NULL, server, NULL, "memapiServer");
@@ -39,12 +43,14 @@ int _main(void) {
 	scePthreadJoin(thread, NULL);
 
 	// Good Bye Message
-	if (DEBUG)
+	#ifdef DEBUG
 		networkSendDebugMessage("[+] Server exiting...\n");
+	#endif
 
 	// Close Debug Connection
-	if (DEBUG)
+	#ifdef DEBUG
 		networkCloseDebugConnection();
+	#endif
 
 	return 0;
 }
