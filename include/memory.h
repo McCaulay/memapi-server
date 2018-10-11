@@ -1,5 +1,7 @@
 #pragma once
 
+#include "client.h"
+
 #define VMMAP_GAP 0x1000000
 
 /*
@@ -62,7 +64,7 @@ typedef struct {
  * --------------------
  * Read data from memory for a given process.
  *
- *	ip:				The client IP.
+ *	client:				The client data.
  *	outputBuffer:	The buffer to put the peeked data into.
  *	outputLength:	The length variable to put the length of the peeked data into.
  *	inputBuffer:	The input buffer containing the arguments. (Process, Address, Length)
@@ -70,27 +72,27 @@ typedef struct {
  *
  *  returns: RPC Error code
  */
-uint8_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
+uint8_t peek(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  poke
  * --------------------
  * Write data to memory for a given process.
  *
- *	ip:				The client IP.
+ *  client:       The client data.
  *	inputBuffer:	The input buffer containing the arguments. (Process, Address, Length, Data)
  *	inputLength:	The total length of the input buffer.
  *
  *  returns: RPC Error code
  */
-uint8_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength);
+uint8_t poke(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  getRegions
  * --------------------
  * Get the memory regions for a given process.
  *
- *	ip:				The client IP.
+ *  client:       The client data.
  *	outputBuffer:	The buffer to put the regions into.
  *	outputLength:	The length variable to put the length of the regions into.
  *	inputBuffer:	The input buffer containing the arguments. (Process)
@@ -98,7 +100,7 @@ uint8_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength);
  *
  *  returns: RPC Error code
  */
-uint8_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
+uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  getVirtualMemoryMaps

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "client.h"
+
 //From https://github.com/freebsd/freebsd/blob/master/sys/sys/sysctl.h#L813
 /*
  * Top-level identifiers
@@ -210,10 +212,10 @@
  * --------------------
  * Get the firmware version
  *
- *	ip:			The client IP.
+ *	client:		The client data.
  *	firmware:	The buffer to put the firmware id into.
  *	length:		The length variable to put the length of the firmware id into.
  *
  *  returns: RPC Error code
  */
-uint8_t getFirmware(char* ip, uint8_t** firmware, uint32_t* length);
+uint8_t getFirmware(struct clientArgs* client, uint8_t** firmware, uint32_t* length);

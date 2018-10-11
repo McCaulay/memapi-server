@@ -5,7 +5,7 @@
 #include "modules.h"
 #include "processes.h"
 
-void handleRpc(int socket, char* ip, uint8_t* buffer, uint32_t length)
+void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 {
 	uint8_t error = NO_ERROR;
 	uint8_t* outputBuffer = malloc(sizeof(uint8_t*));
@@ -18,94 +18,94 @@ void handleRpc(int socket, char* ip, uint8_t* buffer, uint32_t length)
 		- Does not require attaching to peek/poke.
 		case ATTACH:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call attach() invoked\n", ip);
-			error = attach(ip, buffer, length);
+				networkSendDebugMessage("		[%s] Method call attach() invoked\n", client->ip);
+			error = attach(client, buffer, length);
 			break;
 		case DETACH:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call detach() invoked\n", ip);
-			error = detach(ip, buffer, length);
+				networkSendDebugMessage("		[%s] Method call detach() invoked\n", client->ip);
+			error = detach(client, buffer, length);
 			break;
 		*/
 		case POKE:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call poke() invoked\n", ip);
-			error = poke(ip, buffer, length);
+				networkSendDebugMessage("		[%s] Method call poke() invoked\n", client->ip);
+			error = poke(client, buffer, length);
 			break;
 		case PEEK:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call peek() invoked\n", ip);
-			error = peek(ip, &outputBuffer, &outputLength, buffer, length);
+				networkSendDebugMessage("		[%s] Method call peek() invoked\n", client->ip);
+			error = peek(client, &outputBuffer, &outputLength, buffer, length);
 			break;
 		case SEARCH_START:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call searchStart() invoked\n", ip);
-			// error = searchStart(ip, &outputBuffer, &outputLength, buffer, length);
+				networkSendDebugMessage("		[%s] Method call searchStart() invoked\n", client->ip);
+			// error = searchStart(client, &outputBuffer, &outputLength, buffer, length);
 			break;
 		case SEARCH_RESCAN:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call searchRescan() invoked\n", ip);
-			// error = searchRescan(ip, &outputBuffer, &outputLength, buffer, length);
+				networkSendDebugMessage("		[%s] Method call searchRescan() invoked\n", client->ip);
+			// error = searchRescan(client, &outputBuffer, &outputLength, buffer, length);
 			break;
 		case SEARCH_GET_RESULTS:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call searchGetResults() invoked\n", ip);
-			// error = searchGetResults(ip, &outputBuffer, &outputLength);
+				networkSendDebugMessage("		[%s] Method call searchGetResults() invoked\n", client->ip);
+			// error = searchGetResults(client, &outputBuffer, &outputLength);
 			break;
 		case SEARCH_COUNT_RESULTS:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call searchCountResults() invoked\n", ip);
-			// error = searchCountResults(ip, &outputBuffer, &outputLength);
+				networkSendDebugMessage("		[%s] Method call searchCountResults() invoked\n", client->ip);
+			// error = searchCountResults(client, &outputBuffer, &outputLength);
 			break;
 		case SEARCH_END:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call searchEnd() invoked\n", ip);
+				networkSendDebugMessage("		[%s] Method call searchEnd() invoked\n", client->ip);
 			// error = searchEnd();
 			break;
 		case GET_HWID:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call getHardwareId() invoked\n", ip);
-			// error = getHardwareId(ip, &outputBuffer, &outputLength);
+				networkSendDebugMessage("		[%s] Method call getHardwareId() invoked\n", client->ip);
+			// error = getHardwareId(client, &outputBuffer, &outputLength);
 			break;
 		case GET_FIRMWARE:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call getFirmware() invoked\n", ip);
-			error = getFirmware(ip, &outputBuffer, &outputLength);
+				networkSendDebugMessage("		[%s] Method call getFirmware() invoked\n", client->ip);
+			error = getFirmware(client, &outputBuffer, &outputLength);
 			break;
 		case GET_IDPS:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call getIdps() invoked\n", ip);
-			// error = getIdps(ip, &outputBuffer, &outputLength);
+				networkSendDebugMessage("		[%s] Method call getIdps() invoked\n", client->ip);
+			// error = getIdps(client, &outputBuffer, &outputLength);
 			break;
 		case GET_PSID:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call getPsid() invoked\n", ip);
-			// error = getPsid(ip, &outputBuffer, &outputLength);
+				networkSendDebugMessage("		[%s] Method call getPsid() invoked\n", client->ip);
+			// error = getPsid(client, &outputBuffer, &outputLength);
 			break;
 		case GET_PROCESSES:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call getProcesses() invoked\n", ip);
-			error = getProcesses(ip, &outputBuffer, &outputLength);
+				networkSendDebugMessage("		[%s] Method call getProcesses() invoked\n", client->ip);
+			error = getProcesses(client, &outputBuffer, &outputLength);
 			break;
 		case GET_MODULES:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call getModules() invoked\n", ip);
-			error = getModules(ip, &outputBuffer, &outputLength);
+				networkSendDebugMessage("		[%s] Method call getModules() invoked\n", client->ip);
+			error = getModules(client, &outputBuffer, &outputLength);
 			break;
 		case GET_REGIONS:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Method call getRegions() invoked\n", ip);
-			error = getRegions(ip, &outputBuffer, &outputLength, buffer, length);
+				networkSendDebugMessage("		[%s] Method call getRegions() invoked\n", client->ip);
+			error = getRegions(client, &outputBuffer, &outputLength, buffer, length);
 			break;
 		default:
 			if (DEBUG)
-				networkSendDebugMessage("		[%s] Invalid method call parameter [%d]\n", ip, method);
+				networkSendDebugMessage("		[%s] Invalid method call parameter [%d]\n", client->ip, method);
 			error = INVALID_PARAMETER;
 			break;
 	}
 
 	if (DEBUG && error != NO_ERROR)
-		networkSendDebugMessage("		[%s] RPC Error %d\n", ip, error);
+		networkSendDebugMessage("		[%s] RPC Error %d\n", client->ip, error);
 	
 	// Format response
 	uint8_t* outputBufferFull = malloc(outputLength + 1);
@@ -113,7 +113,7 @@ void handleRpc(int socket, char* ip, uint8_t* buffer, uint32_t length)
 	memcpy(&outputBufferFull[1], outputBuffer, outputLength);
 
 	// Send response
-	networkSendData(socket, outputBufferFull, outputLength + 1);
+	networkSendData(client->socket, outputBufferFull, outputLength + 1);
 
 	// Free allocated memory
 	free(outputBuffer);

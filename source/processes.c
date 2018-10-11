@@ -13,7 +13,7 @@ struct inputDetach {
 	uint32_t processId;
 } __attribute__((packed));
 
-size_t getMaxProcesses(char* ip)
+size_t getMaxProcesses(struct clientArgs* client)
 {
 	// sysctl kern.maxproc not working since 1.76...
 	return 1000;
@@ -25,20 +25,20 @@ size_t getMaxProcesses(char* ip)
 	if(sysctl(mib, 2, (void*)&max, &len, NULL, 0) != -1)
 	{
 		if (DEBUG)
-			networkSendDebugMessage("			[%s@getMaxProcesses] Max Processes:  %d\n", ip, max);
+			networkSendDebugMessage("			[%s@getMaxProcesses] Max Processes:  %d\n", client->ip, max);
 		return max;
 	}
 	else
 	{
 		if (DEBUG)
-			networkSendDebugMessage("			[%s@getMaxProcesses] Error %d:  %s\n", ip, errno, strerror(errno));
+			networkSendDebugMessage("			[%s@getMaxProcesses] Error %d:  %s\n", client->ip, errno, strerror(errno));
 		return 0;
 	}
 }
 
-uint8_t getProcesses(char* ip, uint8_t** buffer, uint32_t* length)
+uint8_t getProcesses(struct clientArgs* client, uint8_t** buffer, uint32_t* length)
 {
-	size_t max = getMaxProcesses(ip);
+	size_t max = getMaxProcesses(client);
 
 	int32_t mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, 0 };
 	size_t len;
@@ -101,7 +101,7 @@ uint8_t getProcesses(char* ip, uint8_t** buffer, uint32_t* length)
 		*length += strlen(thread) + 1;
 
 		if (DEBUG)
-			networkSendDebugMessage("			[%s@getProcesses] Process - Id: %d, Name: %s, Thread: %s\n", ip, pid, name, thread);
+			networkSendDebugMessage("			[%s@getProcesses] Process - Id: %d, Name: %s, Thread: %s\n", client->ip, pid, name, thread);
 
 		free(dump);
 	}
@@ -109,7 +109,7 @@ uint8_t getProcesses(char* ip, uint8_t** buffer, uint32_t* length)
 	return NO_ERROR;
 }
 
-uint8_t attach(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
+uint8_t attach(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputAttach input = *(struct inputAttach*)(inputBuffer + 1);
 
@@ -123,20 +123,20 @@ uint8_t attach(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
 		if (DEBUG)
 		{
 			// TODO: Output process name as well as process id. Reuse processes.c code to gather this information.
-			networkSendDebugMessage("			[%s@attach] Failed to attach to process %d\n", ip, input.processId);
-			networkSendDebugMessage("			[%s@attach] Error %d: %s\n", ip, errno, strerror(errno));
+			networkSendDebugMessage("			[%s@attach] Failed to attach to process %d\n", client->ip, input.processId);
+			networkSendDebugMessage("			[%s@attach] Error %d: %s\n", client->ip, errno, strerror(errno));
 		}
 		return FAILED_ATTACH;
 	}
 
 	// Attached
 	if (DEBUG)
-		networkSendDebugMessage("			[%s@attach] Attached to process: %d\n", ip, input.processId);
+		networkSendDebugMessage("			[%s@attach] Attached to process: %d\n", client->ip, input.processId);
 
 	return NO_ERROR;
 }
 
-uint8_t detach(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
+uint8_t detach(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputDetach input = *(struct inputDetach*)(inputBuffer + 1);
 
@@ -144,7 +144,7 @@ uint8_t detach(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
 	ptrace(PT_DETACH, input.processId, NULL, NULL);
 
 	if (DEBUG)
-		networkSendDebugMessage("			[%s@peek] Detached from process: %d\n", ip, input.processId);
+		networkSendDebugMessage("			[%s@peek] Detached from process: %d\n", client->ip, input.processId);
 
 	return NO_ERROR;
 }

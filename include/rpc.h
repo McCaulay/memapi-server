@@ -2,6 +2,7 @@
 
 #include "memory.h"
 #include "sysctl.h"
+#include "client.h"
 
 #define NO_TYPE 0
 #define POKE 1
@@ -37,11 +38,10 @@
  * --------------------
  * Handle the incoming request then call the appropriate function.
  *
- *	socket:	The client socket.
- *	ip:		The client IP.
+ *	client:		The client arguments (IP, Socket...).
  *	buffer:	The received buffer.
  *	length:	The length of the received data.
  *
  *  returns: void
  */
-void handleRpc(int socket, char* ip, uint8_t* buffer, uint32_t length);
+void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length);

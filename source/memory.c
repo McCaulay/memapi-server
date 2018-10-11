@@ -20,13 +20,13 @@ struct inputRegions {
 	uint32_t processId;
 } __attribute__((packed));
 
-uint8_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
+uint8_t peek(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputPeek input = *(struct inputPeek*)(inputBuffer + 1);
 
 	// Debug Information
 	if (DEBUG)
-		networkSendDebugMessage("			[%s@peek] Process Id: %d, Address: 0x%08x, Length: %d\n", ip, input.processId, input.address, input.length);
+		networkSendDebugMessage("			[%s@peek] Process Id: %d, Address: 0x%08x, Length: %d\n", client->ip, input.processId, input.address, input.length);
 
 	// Reallocate memory buffer
 	*outputBuffer = realloc(*outputBuffer, input.length);
@@ -44,7 +44,7 @@ uint8_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* 
 	
 	if (DEBUG)
 	{
-		networkSendDebugMessage("			[%s@peek] Read %d bytes from process %d\n", ip, input.length, input.processId);
+		networkSendDebugMessage("			[%s@peek] Read %d bytes from process %d\n", client->ip, input.length, input.processId);
 
 		int bytesToShow = (input.length > 0x10 ? 0x10 : input.length); // Limit 16
 
@@ -53,7 +53,7 @@ uint8_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* 
 		char* msgAppend = msg;
 
 		// Prepend
-		msgAppend += sprintf(msgAppend, "			[%s@peek] Output: ", ip);
+		msgAppend += sprintf(msgAppend, "			[%s@peek] Output: ", client->ip);
 
 		// Loop bytes and format
 		for (int i = 0; i < bytesToShow; i++)
@@ -75,13 +75,13 @@ uint8_t peek(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* 
 	return NO_ERROR;
 }
 
-uint8_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
+uint8_t poke(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputPoke input = *(struct inputPoke*)(inputBuffer + 1);
 
 	// Debug Information
 	if (DEBUG)
-		networkSendDebugMessage("			[%s@poke] Process Id: %d, Address: 0x%08x, Length: %d\n", ip, input.processId, input.address, input.length);
+		networkSendDebugMessage("			[%s@poke] Process Id: %d, Address: 0x%08x, Length: %d\n", client->ip, input.processId, input.address, input.length);
 
 	// Write buffer into memory into
 	struct ptrace_io_desc ptDesc;
@@ -93,7 +93,7 @@ uint8_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
 
 	if (DEBUG)
 	{
-		networkSendDebugMessage("			[%s@poke] Wrote %d bytes to process %d\n", ip, input.length, input.processId);
+		networkSendDebugMessage("			[%s@poke] Wrote %d bytes to process %d\n", client->ip, input.length, input.processId);
 
 		int bytesToShow = (input.length > 0x10 ? 0x10 : input.length); // Limit 16
 
@@ -102,7 +102,7 @@ uint8_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
 		char* msgAppend = msg;
 
 		// Prepend
-		msgAppend += sprintf(msgAppend, "			[%s@poke] Input: ", ip);
+		msgAppend += sprintf(msgAppend, "			[%s@poke] Input: ", client->ip);
 
 		// Loop bytes and format
 		for (int i = 0; i < bytesToShow; i++)
@@ -124,20 +124,20 @@ uint8_t poke(char* ip, uint8_t* inputBuffer, uint32_t inputLength)
 	return NO_ERROR;
 }
 
-uint8_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
+uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputRegions input = *(struct inputRegions*)(inputBuffer + 1);
 
 	// Debug Information
 	if (DEBUG)
-		networkSendDebugMessage("			[%s@getRegions] Process Id: %d\n", ip, input.processId);
+		networkSendDebugMessage("			[%s@getRegions] Process Id: %d\n", client->ip, input.processId);
 
 	size_t length = 0;
 	kinfo_vmentry* maps = malloc(sizeof(kinfo_vmentry*));
 	if (getVirtualMemoryMaps(input.processId, &maps, &length) == -1)
 	{
 		if (DEBUG)
-			networkSendDebugMessage("			[%s@getRegions] Failed to get virtual memory maps\n", ip);
+			networkSendDebugMessage("			[%s@getRegions] Failed to get virtual memory maps\n", client->ip);
 	}
 
 	// Count number of entries
@@ -181,7 +181,7 @@ uint8_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uin
 	}
 
 	if (DEBUG)
-		networkSendDebugMessage("			[%s@getRegions] Found %d memory maps\n", ip, (uint32_t)(entryCount / 2));
+		networkSendDebugMessage("			[%s@getRegions] Found %d memory maps\n", client->ip, (uint32_t)(entryCount / 2));
 
 	// Reallocate memory buffer
 	*outputBuffer = realloc(*outputBuffer, entryCount * sizeof(uint64_t));
@@ -210,7 +210,7 @@ uint8_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uin
 			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_start;
 			bufferOffset += sizeof(uint64_t);
 			if (DEBUG)
-				networkSendDebugMessage("			[%s@getRegions] %16lx - ", ip, entry.kve_start);
+				networkSendDebugMessage("			[%s@getRegions] %16lx - ", client->ip, entry.kve_start);
 
 			endAddress = entry.kve_end;
 			loopIndex++;
@@ -231,7 +231,7 @@ uint8_t getRegions(char* ip, uint8_t** outputBuffer, uint32_t* outputLength, uin
 			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_start;
 			bufferOffset += sizeof(uint64_t);
 			if (DEBUG)
-				networkSendDebugMessage("			[%s@getRegions] %16lx - ", ip, entry.kve_start);
+				networkSendDebugMessage("			[%s@getRegions] %16lx - ", client->ip, entry.kve_start);
 		}
 		endAddress = entry.kve_end;
 

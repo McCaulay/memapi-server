@@ -17,7 +17,7 @@ void *client(void* args)
 	while ((readSize = networkReceiveData((int)socket, buffer, 512)) > 0)
 	{
 		// Handle buffer
-		handleRpc(socket, ip, buffer, readSize);
+		handleRpc((struct clientArgs*)args, buffer, readSize);
 		memset(buffer, 0, 512);
 	}
 
@@ -25,5 +25,6 @@ void *client(void* args)
 		networkSendDebugMessage("		[%s] Connection disconnected\n", ip);
 
 	networkCloseConnection(socket);
+	free(args);
 	return NULL;
 }

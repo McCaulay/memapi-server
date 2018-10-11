@@ -5,7 +5,7 @@
 #include "sysctl.h"
 #include "rpc.h"
 
-uint8_t getModules(char* ip, uint8_t** buffer, uint32_t* length)
+uint8_t getModules(struct clientArgs* client, uint8_t** buffer, uint32_t* length)
 {
 	int32_t modules[MAX_MODULES];
 	int32_t moduleCount = 0;
@@ -13,7 +13,7 @@ uint8_t getModules(char* ip, uint8_t** buffer, uint32_t* length)
 	getLoadedModules(&modules[0], MAX_MODULES, &moduleCount);
 
 	if (DEBUG)
-		networkSendDebugMessage("			[%s@getModules] Found %d modules\n", ip, moduleCount);
+		networkSendDebugMessage("			[%s@getModules] Found %d modules\n", client->ip, moduleCount);
 
 	// Calculate buffer size
 	for (int i = 0; i < moduleCount; i++)
@@ -48,7 +48,7 @@ uint8_t getModules(char* ip, uint8_t** buffer, uint32_t* length)
 		*length += sizeof(uint64_t);
 
 		if (DEBUG)
-			networkSendDebugMessage("			[%s@getModules] Module - Id: %d, Name: %s, Code Size: 0x%x, Data Size: 0x%x\n", ip, modules[i], info.name, info.codeSize, info.dataSize);
+			networkSendDebugMessage("			[%s@getModules] Module - Id: %d, Name: %s, Code Size: 0x%x, Data Size: 0x%x\n", client->ip, modules[i], info.name, info.codeSize, info.dataSize);
 	}
 
 	return NO_ERROR;

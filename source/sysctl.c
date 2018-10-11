@@ -4,7 +4,7 @@
 #include "sysctl.h"
 #include "rpc.h"
 
-uint8_t getFirmware(char* ip, uint8_t** firmware, uint32_t* length)
+uint8_t getFirmware(struct clientArgs* client, uint8_t** firmware, uint32_t* length)
 {
 	size_t len = 0;
 	int32_t mib[2] = { CTL_KERN, SDK_VERSION };
@@ -25,7 +25,7 @@ uint8_t getFirmware(char* ip, uint8_t** firmware, uint32_t* length)
 	*length = strlen((char*)(*firmware));
 	
 	if (DEBUG)
-		networkSendDebugMessage("			[%s@getFirmware] Firmware: %s\n", ip, (char*)(*firmware));
+		networkSendDebugMessage("			[%s@getFirmware] Firmware: %s\n", client->ip, (char*)(*firmware));
 
 	free(version);
 	version = NULL;
