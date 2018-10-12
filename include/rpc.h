@@ -23,15 +23,11 @@
 #define DETACH 16
 
 #define NO_ERROR 0
-#define NOT_CONNECTED 1
-#define NO_DATA 2
-#define FAILED_ATTACH 3
-#define INVALID_RESPONSE 4
-#define INVALID_CALL_TYPE 5
-#define INVALID_PARAMETER 6
-#define INVALID_ADDRESS 7
-#define CTL_ERROR 8
-#define REQUEST_FAILED 9
+#define INVALID_PARAMETER 1
+#define INVALID_ADDRESS 2
+#define CTL_ERROR 3
+#define SEARCH_NOT_STARTED 4
+#define FAILED_ATTACH 5
 
 /*
  * Function:  handleRpc

@@ -26,7 +26,7 @@ uint8_t peek(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* output
 
 	// Debug Information
 	#ifdef DEBUG
-		networkSendDebugMessage("			[%s@peek] Process Id: %d, Address: 0x%08x, Length: %d\n", client->ip, input.processId, input.address, input.length);
+		networkSendDebugMessage("			[%s@peek] Process Id: %d, Address: %#16lx, Length: %d\n", client->ip, input.processId, input.address, input.length);
 	#endif
 
 	// Ensure memory address is valid
@@ -85,7 +85,7 @@ uint8_t poke(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLeng
 
 	// Debug Information
 	#ifdef DEBUG
-		networkSendDebugMessage("			[%s@poke] Process Id: %d, Address: 0x%08x, Length: %d\n", client->ip, input.processId, input.address, input.length);
+		networkSendDebugMessage("			[%s@poke] Process Id: %d, Address: %#16lx, Length: %d\n", client->ip, input.processId, input.address, input.length);
 	#endif
 
 	// Ensure memory address is valid
@@ -221,7 +221,7 @@ uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* 
 			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_start;
 			bufferOffset += sizeof(uint64_t);
 			#ifdef DEBUG
-				networkSendDebugMessage("			[%s@getRegions] %16lx - ", client->ip, entry.kve_start);
+				networkSendDebugMessage("			[%s@getRegions] %#16lx - ", client->ip, entry.kve_start);
 			#endif
 
 			endAddress = entry.kve_end;
@@ -244,7 +244,7 @@ uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* 
 			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_start;
 			bufferOffset += sizeof(uint64_t);
 			#ifdef DEBUG
-				networkSendDebugMessage("			[%s@getRegions] %16lx - ", client->ip, entry.kve_start);
+				networkSendDebugMessage("			[%s@getRegions] %#16lx - ", client->ip, entry.kve_start);
 			#endif
 		}
 		endAddress = entry.kve_end;

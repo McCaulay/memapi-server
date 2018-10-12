@@ -4,6 +4,7 @@
 #include "networking.h"
 #include "modules.h"
 #include "processes.h"
+#include "search.h"
 
 void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 {
@@ -45,31 +46,31 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call searchStart() invoked\n", client->ip);
 			#endif
-			// error = searchStart(client, &outputBuffer, &outputLength, buffer, length);
+			error = searchStart(client, buffer, length);
 			break;
 		case SEARCH_RESCAN:
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call searchRescan() invoked\n", client->ip);
 			#endif
-			// error = searchRescan(client, &outputBuffer, &outputLength, buffer, length);
+			error = searchRescan(client, buffer, length);
 			break;
 		case SEARCH_GET_RESULTS:
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call searchGetResults() invoked\n", client->ip);
 			#endif
-			// error = searchGetResults(client, &outputBuffer, &outputLength);
+			error = searchGetResults(client, &outputBuffer, &outputLength);
 			break;
 		case SEARCH_COUNT_RESULTS:
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call searchCountResults() invoked\n", client->ip);
 			#endif
-			// error = searchCountResults(client, &outputBuffer, &outputLength);
+			error = searchCountResults(client, &outputBuffer, &outputLength);
 			break;
 		case SEARCH_END:
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call searchEnd() invoked\n", client->ip);
 			#endif
-			// error = searchEnd();
+			error = searchEnd(client);
 			break;
 		case GET_HWID:
 			#ifdef DEBUG

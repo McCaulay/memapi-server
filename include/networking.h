@@ -53,9 +53,9 @@ int networkAccept(int socket, struct sockaddr *address);
  */
 #define networkSendMessage(socket, format, ...)\
 do {\
-	char buffer[512];\
-	int size = sprintf(buffer, format, ##__VA_ARGS__);\
-	sceNetSend(socket, buffer, size, 0);\
+	char msgBuffer[512];\
+	int msgSize = sprintf(msgBuffer, format, ##__VA_ARGS__);\
+	sceNetSend(socket, msgBuffer, msgSize, 0);\
 } while(0)
 
 /*
@@ -135,9 +135,9 @@ void networkOpenDebugConnection(const char *ip, uint16_t port);
  */
 #define networkSendDebugMessage(format, ...)\
 do {\
-	char buffer[512];\
-	int size = sprintf(buffer, format, ##__VA_ARGS__);\
-	sceNetSend(debugSocket, buffer, size, 0);\
+	char msgBufferDebug[512];\
+	int msgSizeDebug = sprintf(msgBufferDebug, format, ##__VA_ARGS__);\
+	sceNetSend(debugSocket, msgBufferDebug, msgSizeDebug, 0);\
 } while(0)
 
 /*

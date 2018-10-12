@@ -26,6 +26,7 @@ void *client(void* args)
 	#endif
 
 	networkCloseConnection(cArgs->socket);
+
 	free(args);
 	return NULL;
 }

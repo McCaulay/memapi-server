@@ -9,8 +9,8 @@
  * --------------------
  *
  *	processId:	4 Bytes | The process id.
- *	address:	  8 Bytes | The memory address you want to read.
- *	length:		  4 Bytes | The number of bytes you want to read from the address.
+ *	address:	8 Bytes | The memory address you want to read.
+ *	length:		4 Bytes | The number of bytes you want to read from the address.
  */
 struct inputPeek;
 
@@ -19,8 +19,8 @@ struct inputPeek;
  * --------------------
  *
  *	processId:	4 Bytes | The process id.
- *	address:	  8 Bytes | The memory address you want to read.
- *	length:		  4 Bytes | The number of bytes you want to read from the address.
+ *	address:	8 Bytes | The memory address you want to write data to.
+ *	length:		4 Bytes | The number of bytes you want to write at the address.
  */
 struct inputPoke;
 
