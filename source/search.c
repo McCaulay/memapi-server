@@ -110,10 +110,6 @@ uint8_t searchStart(struct clientArgs* client, uint8_t* inputBuffer, uint32_t in
 		networkSendDebugMessage("			[%s@searchStart] Process Id: %d, Start Address: %#16lx, End Address: %#16lx, Length: %d\n", client->ip, input.processId, input.startAddress, input.endAddress, input.length);
 	#endif
 
-	// Ensure memory address is valid
-	if (!isAddressRangeValid(client, input.processId, input.startAddress, input.endAddress))
-		return INVALID_ADDRESS;
-
 	// If memory is already allocated (ie Started searching previously without ending) then free previous results
 	if (state == STARTED)
 		freeResults(&results);
@@ -121,45 +117,106 @@ uint8_t searchStart(struct clientArgs* client, uint8_t* inputBuffer, uint32_t in
 	// Allocate results memory
 	allocateResults(&results, 100);
 
-	// Calculate search size
-	uint64_t size = input.endAddress + input.startAddress;
-
-	// Allocate buffer
-	uint8_t* buffer = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-
-	// Dump Process Memory
-	struct ptrace_io_desc ptDesc;
-	ptDesc.piod_offs = (void*)(input.startAddress);
-	ptDesc.piod_len = size;
-	ptDesc.piod_addr = buffer;
-	ptDesc.piod_op = PIOD_READ_D;
-	ptrace(PT_IO, input.processId, &ptDesc, 0);
-
-	// Search dumped process memory
-	for (uint32_t offset = 0; offset < size; offset++)
+	size_t length = 0;
+	kinfo_vmentry* maps = malloc(sizeof(kinfo_vmentry*));
+	if (getVirtualMemoryMaps(input.processId, &maps, &length) == -1)
 	{
-		// Loop our sequence bytes and compare
-		bool matching = true;
-		for (uint32_t i = 0; i < input.length; i++)
+		#ifdef DEBUG
+			networkSendDebugMessage("			[%s@searchStart] Failed to get virtual memory maps\n", client->ip);
+		#endif
+	}
+
+	uint64_t entryAddress = (uint64_t)(maps);
+	uint64_t offset = 0;
+	bool inSearchRegion = false;
+
+	// Loop each memory region
+	while (offset < length)
+	{
+		kinfo_vmentry entry = *(kinfo_vmentry*)(entryAddress + offset);
+
+		offset += entry.kve_structsize;
+
+		if (entry.kve_structsize == 0)
+			break;
+
+		// Start search region
+		if (input.startAddress >= entry.kve_start && input.startAddress <= entry.kve_end)
+			inSearchRegion = true;
+
+		#ifdef DEBUG
+			networkSendDebugMessage("			[%s@searchStart] %#16lx to %#16lx (In: %c)\n", client->ip, entry.kve_start, entry.kve_end, inSearchRegion ? 'y' : 'n');
+		#endif
+
+		// In this memory region
+		if (inSearchRegion)
 		{
-			if (*(uint8_t*)(buffer + offset + i) != *(uint8_t*)(inputData + i))
+			// Default start/length is full region
+			uint64_t dumpStart = entry.kve_start;
+			uint64_t dumpLength = entry.kve_end - entry.kve_start;
+
+			// If we only need to dump part of the region, only dump the part we need
+			if (input.startAddress >= entry.kve_start && input.startAddress <= entry.kve_end && input.endAddress >= entry.kve_start && input.endAddress <= entry.kve_end)
 			{
-				matching = false;
-				break;
+				dumpStart = input.startAddress;
+				dumpLength = input.endAddress - input.startAddress;
 			}
+			else if (input.startAddress >= entry.kve_start && input.startAddress <= entry.kve_end)
+			{
+				dumpStart = input.startAddress;
+				dumpLength = entry.kve_end - input.startAddress;
+			}
+			else if (input.endAddress >= entry.kve_start && input.endAddress <= entry.kve_end)
+			{
+				dumpStart = entry.kve_start;
+				dumpLength = input.endAddress - entry.kve_start;	
+			}
+
+			#ifdef DEBUG
+				networkSendDebugMessage("			[%s@searchStart] Dumping %#16lx to %#16lx\n", client->ip, dumpStart, dumpStart + dumpLength);
+			#endif
+
+			// Dump Memory
+			uint8_t* buffer = malloc(dumpLength);
+			struct ptrace_io_desc ptDesc;
+			ptDesc.piod_offs = (void*)(dumpStart);
+			ptDesc.piod_len = dumpLength;
+			ptDesc.piod_addr = buffer;
+			ptDesc.piod_op = PIOD_READ_D;
+			ptrace(PT_IO, input.processId, &ptDesc, 0);
+
+			// Loop each byte in buffer
+			bool found = false;
+			for (uint64_t index = 0; index < dumpLength; index++)
+			{
+				// See if sequence matches
+				found = true;
+				for (int i = 0; i < input.length; i++)
+				{
+					if (*(uint8_t*)(buffer + index + i) != *(uint8_t*)(inputData + i))
+					{
+						found = false;
+						break;
+					}
+				}
+
+				if (found)
+					addResult(&results, dumpStart + index);
+			}
+
+			free(buffer);
 		}
 
-		// Matched sequence
-		if (matching)
-			addResult(&results, input.startAddress + offset);
+		// End search region
+		if (input.endAddress >= entry.kve_start && input.endAddress <= entry.kve_end)
+			inSearchRegion = false;
 	}
 
 	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@searchStart] Found %d results\n", client->ip, results.count);
 	#endif
 
-	// Free buffer
-	munmap(buffer, size);
+	free(maps);
 
 	return NO_ERROR;
 }
@@ -185,7 +242,8 @@ uint8_t searchRescan(struct clientArgs* client, uint8_t* inputBuffer, uint32_t i
 	uint8_t* buffer = malloc(input.length);
 
 	// Loop each result
-	for (uint32_t index = 0; index < results.count; index++)
+	int resultCount = results.count;
+	for (uint32_t index = 0; index < resultCount; index++)
 	{
 		// Dump memory at address
 		struct ptrace_io_desc ptDesc;
