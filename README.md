@@ -33,8 +33,12 @@ Available Remote Functions
 | debugSetRegisters()      | DEBUG_SET_REGISTERS       | Set a processes registers                                   |
 | debugGetFloatRegisters() | DEBUG_GET_FLOAT_REGISTERS | Get a processes floating point registers                    |
 | debugSetFloatRegisters() | DEBUG_SET_FLOAT_REGISTERS | Set a processes floating point registers                    |
+| debugGetDebugRegisters() | DEBUG_GET_DEBUG_REGISTERS | Get a processes debug registers                             |
+| debugSetDebugRegisters() | DEBUG_SET_DEBUG_REGISTERS | Set a processes debug registers                             |
 | debugAddBreakpoint()     | DEBUG_ADD_BREAKPOINT      | Add a breakpoint to the process                             |
 | debugRemoveBreakpoint()  | DEBUG_REMOVE_BREAKPOINT   | Remove a breakpoint from the process                        |
+| debugAddWatchpoint()     | DEBUG_ADD_WATCHPOINT      | Add a watch to the process                                  |
+| debugRemoveWatchpoint()  | DEBUG_REMOVE_WATCHPOINT   | Remove a watch from the process                             |
 
 
 Thanks to 2much4u, CTurt, Kiwidog and Golden for sources / advice.

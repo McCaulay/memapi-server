@@ -23,6 +23,26 @@
 struct inputDebug;
 
 /*
+ * Struct:  inputDebugAddWatchpoint
+ * --------------------
+ *
+ *	processId:		4 Bytes | The process id.
+ *	registerIndex:	4 Bytes | The register to use. (0 - 3)
+ *	address:		8 Bytes | The memory address to watch.
+ *	length:			4 Bytes | The number of bytes to watch.
+ *	type:			4 Bytes | The watchpoint type (DBREG_DR7_EXEC 0x00, DBREG_DR7_WRONLY 0x01, DBREG_DR7_RDWR 0x03)
+ */
+struct inputDebugAddWatchpoint;
+/*
+ * Struct:  inputDebugRemoveWatchpoint
+ * --------------------
+ *
+ *	processId:		4 Bytes | The process id.
+ *	registerIndex:	4 Bytes | The register to use. (0 - 3)
+ */
+struct inputDebugRemoveWatchpoint;
+
+/*
  * Function:  debugContinue
  * --------------------
  * Continue the process.
@@ -77,7 +97,7 @@ uint8_t debugStep(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inpu
 /*
  * Function:  debugGetRegisters
  * --------------------
- * Get the process registers.
+ * Get the processes registers.
  *
  *  client:       	The client data.
  *	outputBuffer:	The buffer to put the registers into.
@@ -88,3 +108,44 @@ uint8_t debugStep(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inpu
  *  returns: RPC Error code
  */
 uint8_t debugGetRegisters(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
+
+/*
+ * Function:  debugGetDebugRegisters
+ * --------------------
+ * Get the processes debug registers.
+ *
+ *  client:       	The client data.
+ *	outputBuffer:	The buffer to put the debug registers into.
+ *	outputLength:	The length variable to put the length of the debug registers into.
+ *	inputBuffer:	The input buffer containing the arguments. (ProcessId)
+ *	inputLength:	The total length of the input buffer.
+ *
+ *  returns: RPC Error code
+ */
+uint8_t debugGetDebugRegisters(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
+
+/*
+ * Function:  debugAddWatchpoint
+ * --------------------
+ * Add a watchpoint to the process.
+ *
+ *  client:       	The client data.
+ *	inputBuffer:	The input buffer containing the arguments. (ProcessId, RegisterIndex, Address, Length, Type)
+ *	inputLength:	The total length of the input buffer.
+ *
+ *  returns: RPC Error code
+ */
+uint8_t debugAddWatchpoint(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength);
+
+/*
+ * Function:  debugRemoveWatchpoint
+ * --------------------
+ * Remove a watchpoint from the process.
+ *
+ *  client:       	The client data.
+ *	inputBuffer:	The input buffer containing the arguments. (ProcessId, RegisterIndex)
+ *	inputLength:	The total length of the input buffer.
+ *
+ *  returns: RPC Error code
+ */
+uint8_t debugRemoveWatchpoint(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength);

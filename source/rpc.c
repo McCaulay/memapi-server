@@ -170,6 +170,18 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 			#endif
 			// error = debugSetFloatRegisters(client, buffer, length);
 			break;
+		case DEBUG_GET_DEBUG_REGISTERS:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugGetDebugRegisters() invoked\n", client->ip);
+			#endif
+			error = debugGetDebugRegisters(client, &outputBuffer, &outputLength, buffer, length);
+			break;
+		case DEBUG_SET_DEBUG_REGISTERS:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugSetDebugRegisters() invoked\n", client->ip);
+			#endif
+			// error = debugSetDebugRegisters(client, buffer, length);
+			break;
 		case DEBUG_ADD_BREAKPOINT:
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call debugAddBreakpoint() invoked\n", client->ip);
@@ -181,6 +193,18 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 				networkSendDebugMessage("		[%s] Method call debugRemoveBreakpoint() invoked\n", client->ip);
 			#endif
 			// error = debugRemoveBreakpoint(client, buffer, length);
+			break;
+		case DEBUG_ADD_WATCHPOINT:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugAddWatchpoint() invoked\n", client->ip);
+			#endif
+			error = debugAddWatchpoint(client, buffer, length);
+			break;
+		case DEBUG_REMOVE_WATCHPOINT:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugRemoveWatchpoint() invoked\n", client->ip);
+			#endif
+			error = debugRemoveWatchpoint(client, buffer, length);
 			break;
 		default:
 			#ifdef DEBUG
