@@ -130,15 +130,57 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 			break;
 		case DEBUG_STOP:
 			#ifdef DEBUG
-				networkSendDebugMessage("		[%s] Method call debugPause() invoked\n", client->ip);
+				networkSendDebugMessage("		[%s] Method call debugStop() invoked\n", client->ip);
 			#endif
 			error = debugStop(client, buffer, length);
 			break;
 		case DEBUG_KILL:
 			#ifdef DEBUG
-				networkSendDebugMessage("		[%s] Method call debugStop() invoked\n", client->ip);
+				networkSendDebugMessage("		[%s] Method call debugKill() invoked\n", client->ip);
 			#endif
 			error = debugKill(client, buffer, length);
+			break;
+		case DEBUG_STEP:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugStep() invoked\n", client->ip);
+			#endif
+			error = debugStep(client, buffer, length);
+			break;
+		case DEBUG_GET_REGISTERS:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugGetRegisters() invoked\n", client->ip);
+			#endif
+			error = debugGetRegisters(client, &outputBuffer, &outputLength, buffer, length);
+			break;
+		case DEBUG_SET_REGISTERS:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugSetRegisters() invoked\n", client->ip);
+			#endif
+			// error = debugSetRegisters(client, buffer, length);
+			break;
+		case DEBUG_GET_FLOAT_REGISTERS:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugGetFloatRegisters() invoked\n", client->ip);
+			#endif
+			// error = debugGetFloatRegisters(client, buffer, length);
+			break;
+		case DEBUG_SET_FLOAT_REGISTERS:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugSetFloatRegisters() invoked\n", client->ip);
+			#endif
+			// error = debugSetFloatRegisters(client, buffer, length);
+			break;
+		case DEBUG_ADD_BREAKPOINT:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugAddBreakpoint() invoked\n", client->ip);
+			#endif
+			// error = debugAddBreakpoint(client, buffer, length);
+			break;
+		case DEBUG_REMOVE_BREAKPOINT:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugRemoveBreakpoint() invoked\n", client->ip);
+			#endif
+			// error = debugRemoveBreakpoint(client, buffer, length);
 			break;
 		default:
 			#ifdef DEBUG
