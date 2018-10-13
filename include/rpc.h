@@ -29,6 +29,11 @@
 #define CTL_ERROR 3
 #define SEARCH_NOT_STARTED 4
 #define FAILED_ATTACH 5
+#define NOT_CONNECTED 6
+#define NO_DATA 7
+#define INVALID_RESPONSE 8
+#define INVALID_CALL_TYPE 9
+#define REQUEST_FAILED 10
 
 /*
  * Function:  handleRpc

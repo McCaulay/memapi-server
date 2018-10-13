@@ -11,7 +11,7 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 {
 	uint8_t error = NO_ERROR;
 	uint8_t* outputBuffer = malloc(sizeof(uint8_t*));
-	uint32_t outputLength = 1;
+	uint32_t outputLength = 0;
 
 	uint8_t method = buffer[0];
 	switch (method)
