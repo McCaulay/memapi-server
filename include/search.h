@@ -2,6 +2,9 @@
 
 #include "client.h"
 
+// ~100MB Dump size
+#define MAX_DUMP_SIZE 0x6000000
+
 /*
  * Struct:  inputSearchStart
  * --------------------

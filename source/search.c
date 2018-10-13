@@ -155,6 +155,7 @@ uint8_t searchStart(struct clientArgs* client, uint8_t* inputBuffer, uint32_t in
 			// Default start/length is full region
 			uint64_t dumpStart = entry.kve_start;
 			uint64_t dumpLength = entry.kve_end - entry.kve_start;
+			uint64_t dumpEnd = dumpStart + dumpLength;
 
 			// If we only need to dump part of the region, only dump the part we need
 			if (input.startAddress >= entry.kve_start && input.startAddress <= entry.kve_end && input.endAddress >= entry.kve_start && input.endAddress <= entry.kve_end)
@@ -172,40 +173,56 @@ uint8_t searchStart(struct clientArgs* client, uint8_t* inputBuffer, uint32_t in
 				dumpStart = entry.kve_start;
 				dumpLength = input.endAddress - entry.kve_start;	
 			}
+			dumpEnd = dumpStart + dumpLength;
 
 			#ifdef DEBUG
-				networkSendDebugMessage("			[%s@searchStart] Dumping %#16lx to %#16lx\n", client->ip, dumpStart, dumpStart + dumpLength);
+				networkSendDebugMessage("			[%s@searchStart] Dumping %#16lx to %#16lx\n", client->ip, dumpStart, dumpEnd);
 			#endif
 
 			// Dump Memory
-			uint8_t* buffer = malloc(dumpLength);
-			struct ptrace_io_desc ptDesc;
-			ptDesc.piod_offs = (void*)(dumpStart);
-			ptDesc.piod_len = dumpLength;
-			ptDesc.piod_addr = buffer;
-			ptDesc.piod_op = PIOD_READ_D;
-			ptrace(PT_IO, input.processId, &ptDesc, 0);
-
-			// Loop each byte in buffer
-			bool found = false;
-			for (uint64_t index = 0; index < dumpLength; index++)
+			uint64_t splitDumpAddress = dumpStart;
+			while (splitDumpAddress < dumpEnd)
 			{
-				// See if sequence matches
-				found = true;
-				for (int i = 0; i < input.length; i++)
+				uint64_t dumpSize = MAX_DUMP_SIZE;
+				// If the next increase will surpass the dump end, only dump the remaining section.
+				if (splitDumpAddress + dumpSize > dumpEnd)
+					dumpSize = dumpEnd - splitDumpAddress;
+
+				#ifdef DEBUG
+					networkSendDebugMessage("			[%s@searchStart] Dumping Split %#16lx to %#16lx\n", client->ip, splitDumpAddress, splitDumpAddress + dumpSize);
+				#endif
+
+				uint8_t* buffer = malloc(dumpSize);
+				struct ptrace_io_desc ptDesc;
+				ptDesc.piod_offs = (void*)(splitDumpAddress);
+				ptDesc.piod_len = dumpSize;
+				ptDesc.piod_addr = buffer;
+				ptDesc.piod_op = PIOD_READ_D;
+				ptrace(PT_IO, input.processId, &ptDesc, 0);
+
+				// Loop each byte in buffer
+				bool found = false;
+				for (uint64_t index = 0; index < dumpSize; index++)
 				{
-					if (*(uint8_t*)(buffer + index + i) != *(uint8_t*)(inputData + i))
+					// See if sequence matches
+					found = true;
+					for (int i = 0; i < input.length; i++)
 					{
-						found = false;
-						break;
+						if (*(uint8_t*)(buffer + index + i) != *(uint8_t*)(inputData + i))
+						{
+							found = false;
+							break;
+						}
 					}
+
+					if (found)
+						addResult(&results, splitDumpAddress + index);
 				}
 
-				if (found)
-					addResult(&results, dumpStart + index);
-			}
+				free(buffer);
 
-			free(buffer);
+				splitDumpAddress += dumpSize;
+			}
 		}
 
 		// End search region
