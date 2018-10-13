@@ -6,6 +6,7 @@
 #include "processes.h"
 #include "search.h"
 #include "notify.h"
+#include "debug.h"
 
 void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 {
@@ -120,6 +121,24 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 				networkSendDebugMessage("		[%s] Method call notify() invoked\n", client->ip);
 			#endif
 			error = notification(client, buffer, length);
+			break;
+		case DEBUG_CONTINUE:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugContinue() invoked\n", client->ip);
+			#endif
+			error = debugContinue(client, buffer, length);
+			break;
+		case DEBUG_STOP:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugPause() invoked\n", client->ip);
+			#endif
+			error = debugStop(client, buffer, length);
+			break;
+		case DEBUG_KILL:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugStop() invoked\n", client->ip);
+			#endif
+			error = debugKill(client, buffer, length);
 			break;
 		default:
 			#ifdef DEBUG
