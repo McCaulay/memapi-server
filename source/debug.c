@@ -8,6 +8,14 @@ struct inputDebug {
 	uint32_t processId;
 } __attribute__((packed));
 
+struct inputDebugSetRegisters {
+	uint32_t processId;
+} __attribute__((packed));
+
+struct inputDebugSetDebugRegisters {
+	uint32_t processId;
+} __attribute__((packed));
+
 struct inputDebugAddWatchpoint {
 	uint32_t processId;
 	uint32_t registerIndex;
@@ -134,6 +142,23 @@ uint8_t debugGetRegisters(struct clientArgs* client, uint8_t** outputBuffer, uin
 	return NO_ERROR;
 }
 
+uint8_t debugSetRegisters(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength)
+{
+	struct inputDebugSetRegisters input = *(struct inputDebugSetRegisters*)(inputBuffer + 1);
+
+	// Debug Information
+	#ifdef DEBUG
+		networkSendDebugMessage("			[%s@debugSetRegisters] Process Id: %d\n", client->ip, input.processId);
+	#endif
+
+	struct reg* registers = (struct reg*)(&inputBuffer[1 + sizeof(struct inputDebugSetRegisters)]);
+
+	// Set registers
+	ptrace(PT_SETREGS, input.processId, registers, NULL);
+
+	return NO_ERROR;
+}
+
 uint8_t debugGetDebugRegisters(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputDebug input = *(struct inputDebug*)(inputBuffer + 1);
@@ -194,6 +219,23 @@ uint8_t debugGetDebugRegisters(struct clientArgs* client, uint8_t** outputBuffer
 
 	// Store registers in output buffer
 	*(struct dbreg*)(*outputBuffer) = registers;
+
+	return NO_ERROR;
+}
+
+uint8_t debugSetDebugRegisters(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength)
+{
+	struct inputDebugSetDebugRegisters input = *(struct inputDebugSetDebugRegisters*)(inputBuffer + 1);
+
+	// Debug Information
+	#ifdef DEBUG
+		networkSendDebugMessage("			[%s@debugSetDebugRegisters] Process Id: %d\n", client->ip, input.processId);
+	#endif
+
+	struct dbreg* registers = (struct dbreg*)(&inputBuffer[1 + sizeof(struct inputDebugSetDebugRegisters)]);
+
+	// Set registers
+	ptrace(PT_SETDBREGS, input.processId, registers, NULL);
 
 	return NO_ERROR;
 }

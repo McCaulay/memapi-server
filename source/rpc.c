@@ -156,7 +156,7 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call debugSetRegisters() invoked\n", client->ip);
 			#endif
-			// error = debugSetRegisters(client, buffer, length);
+			error = debugSetRegisters(client, buffer, length);
 			break;
 		case DEBUG_GET_FLOAT_REGISTERS:
 			#ifdef DEBUG
@@ -180,7 +180,7 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call debugSetDebugRegisters() invoked\n", client->ip);
 			#endif
-			// error = debugSetDebugRegisters(client, buffer, length);
+			error = debugSetDebugRegisters(client, buffer, length);
 			break;
 		case DEBUG_ADD_BREAKPOINT:
 			#ifdef DEBUG

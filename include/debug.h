@@ -23,6 +23,24 @@
 struct inputDebug;
 
 /*
+ * Struct:  inputDebugSetRegisters
+ * --------------------
+ *
+ *	processId:	4 Bytes   | The process id.
+ *	registers:	120 Bytes | The registers.
+ */
+struct inputDebugSetRegisters;
+
+/*
+ * Struct:  inputDebugSetDebugRegisters
+ * --------------------
+ *
+ *	processId:	4 Bytes   | The process id.
+ *	registers:	128 Bytes | The registers.
+ */
+struct inputDebugSetDebugRegisters;
+
+/*
  * Struct:  inputDebugAddWatchpoint
  * --------------------
  *
@@ -110,6 +128,19 @@ uint8_t debugStep(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inpu
 uint8_t debugGetRegisters(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
+ * Function:  debugSetRegisters
+ * --------------------
+ * Set the processes registers.
+ *
+ *  client:       	The client data.
+ *	inputBuffer:	The input buffer containing the arguments. (ProcessId, Registers)
+ *	inputLength:	The total length of the input buffer.
+ *
+ *  returns: RPC Error code
+ */
+uint8_t debugSetRegisters(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength);
+
+/*
  * Function:  debugGetDebugRegisters
  * --------------------
  * Get the processes debug registers.
@@ -123,6 +154,19 @@ uint8_t debugGetRegisters(struct clientArgs* client, uint8_t** outputBuffer, uin
  *  returns: RPC Error code
  */
 uint8_t debugGetDebugRegisters(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);
+
+/*
+ * Function:  debugSetDebugRegisters
+ * --------------------
+ * Set the processes debug registers.
+ *
+ *  client:       	The client data.
+ *	inputBuffer:	The input buffer containing the arguments. (ProcessId, Registers)
+ *	inputLength:	The total length of the input buffer.
+ *
+ *  returns: RPC Error code
+ */
+uint8_t debugSetDebugRegisters(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength);
 
 /*
  * Function:  debugAddWatchpoint
