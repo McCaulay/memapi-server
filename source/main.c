@@ -3,6 +3,7 @@
 #include "networking.h"
 #include "server.h"
 #include "escalate.h"
+#include "notify.h"
 
 /*
  * Function:  _main
@@ -30,6 +31,12 @@ int _main(void) {
 		networkSendDebugMessage("[+] Escalating privileges to root...\n");
 	#endif
 	kexec(&getRoot, NULL);
+
+	// Initialise and resolve libraries
+	initSysUtil();
+
+	// Welcome Notification
+	notify("MEMAPI By Ludicrous Beach");
 
 	// Starting server message
 	#ifdef DEBUG

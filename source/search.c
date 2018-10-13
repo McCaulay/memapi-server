@@ -100,6 +100,7 @@ void freeResults(struct searchResults* sResults)
 	state = ENDED;
 }
 
+// TODO: [192.168.0.38@searchStart] Dumping      0x200400000 to      0x27eb00000 - Chunk large ranges
 uint8_t searchStart(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength)
 {
 	struct inputSearchStart input = *(struct inputSearchStart*)(inputBuffer + 1);

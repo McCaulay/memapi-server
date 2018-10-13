@@ -19,6 +19,7 @@ Available Remote Functions
 | getModules()         | GET_MODULES          | Get a list of running modules                               |
 | getRegions()         | GET_REGIONS          | Get regions for a given process                             |
 | getFirmware()        | GET_FIRMWARE         | Get the firmware version                                    |
+| notify()             | NOTIFY               | Send a system notification                                  |
 | searchStart()        | SEARCH_START         | Start searching for data                                    |
 | searchRescan()       | SEARCH_RESCAN        | Rescan results from a previous search for a new set of data |
 | searchGetResults()   | SEARCH_GET_RESULTS   | Get the current list of results                             |

@@ -21,6 +21,7 @@
 #define SEARCH_END 14
 #define ATTACH 15
 #define DETACH 16
+#define NOTIFY 17
 
 #define NO_ERROR 0
 #define INVALID_PARAMETER 1

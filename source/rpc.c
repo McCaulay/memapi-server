@@ -5,6 +5,7 @@
 #include "modules.h"
 #include "processes.h"
 #include "search.h"
+#include "notify.h"
 
 void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 {
@@ -113,6 +114,12 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 				networkSendDebugMessage("		[%s] Method call getRegions() invoked\n", client->ip);
 			#endif
 			error = getRegions(client, &outputBuffer, &outputLength, buffer, length);
+			break;
+		case NOTIFY:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call notify() invoked\n", client->ip);
+			#endif
+			error = notification(client, buffer, length);
 			break;
 		default:
 			#ifdef DEBUG
