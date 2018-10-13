@@ -30,6 +30,26 @@ int getRoot(struct thread* td, void* args)
 	void** got_prison0 =   (void**)&kernel_ptr[KERN_PRISON0];
 	void** got_rootvnode = (void**)&kernel_ptr[KERN_ROOTVNODE];
 
+	// Define Kernel Functions
+	/*
+	 * Function:  icc_query
+	 */
+	// int (*icc_query)(void* msg_in, void* msg_out) = (void*)(kernel_base + KERN_ICC_QUERY); 
+
+	// Buzzer
+	/*char* message_beep = calloc(1, 0x7F0);
+	message_beep[0] = 0x0; 
+	message_beep[1] = 0x9; 
+	message_beep[2] = 0x0; 
+	message_beep[3] = 0x0; 
+	message_beep[4] = 0x0; 
+	message_beep[5] = 0x0; 
+	message_beep[6] = 0x0; 
+	message_beep[7] = 0x0; 
+	message_beep[8] = 0x0;
+	message_beep[9] = 0x20;
+	icc_query(message_beep, message_beep);*/
+
 	// Escalate process to root
 	cred->cr_uid = 0;
 	cred->cr_ruid = 0;

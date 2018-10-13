@@ -5,6 +5,8 @@
 #define	KERN_PRISON0 		0x10986A0
 #define	KERN_ROOTVNODE 		0x22C1A70
 
+#define KERN_ICC_QUERY 0x43540
+
 struct auditinfo_addr {
     /*
     4    ai_auid;

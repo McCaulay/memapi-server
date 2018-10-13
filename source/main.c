@@ -37,6 +37,7 @@ int _main(void) {
 
 	// Welcome Notification
 	notify("MEMAPI By Ludicrous Beach");
+	return 0;
 
 	// Starting server message
 	#ifdef DEBUG
