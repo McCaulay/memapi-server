@@ -95,9 +95,6 @@ int networkSendData(int socket, uint8_t* buffer, int32_t size);
  */
 int networkCloseConnection(int socket);
 
-// Debug Functions
-#ifdef DEBUG
-
 /*
  * Function:  networkOpenConnection
  * --------------------
@@ -110,6 +107,9 @@ int networkCloseConnection(int socket);
  *  returns: socket
  */
 int networkOpenConnection(const char * name, const char *ip, uint16_t port);
+
+// Debug Functions
+#ifdef DEBUG
 
 /*
  * Function:  networkOpenDebugConnection
@@ -137,7 +137,12 @@ void networkOpenDebugConnection(const char *ip, uint16_t port);
 do {\
 	char msgBufferDebug[512];\
 	int msgSizeDebug = sprintf(msgBufferDebug, format, ##__VA_ARGS__);\
-	sceNetSend(debugSocket, msgBufferDebug, msgSizeDebug, 0);\
+	if (sceNetSend(debugSocket, msgBufferDebug, msgSizeDebug, 0) == -1)\
+	{\
+		networkCloseDebugConnection();\
+		networkOpenDebugConnection(DEBUG_IP, DEBUG_PORT);\
+		sceNetSend(debugSocket, msgBufferDebug, msgSizeDebug, 0);\
+	}\
 } while(0)
 
 /*

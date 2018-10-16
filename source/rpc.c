@@ -17,8 +17,6 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 	uint8_t method = buffer[0];
 	switch (method)
 	{
-		/*
-		- Does not require attaching to peek/poke.
 		case ATTACH:
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call attach() invoked\n", client->ip);
@@ -31,7 +29,6 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 			#endif
 			error = detach(client, buffer, length);
 			break;
-		*/
 		case POKE:
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call poke() invoked\n", client->ip);

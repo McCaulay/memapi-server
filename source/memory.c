@@ -237,7 +237,7 @@ uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* 
 			*(uint64_t*)(*outputBuffer + bufferOffset) = endAddress;
 			bufferOffset += sizeof(uint64_t);
 			#ifdef DEBUG
-				networkSendDebugMessage("%16lx\n", endAddress);
+				networkSendDebugMessage("%#16lx\n", endAddress);
 			#endif
 
 			// Append start
@@ -256,7 +256,7 @@ uint8_t getRegions(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* 
 			*(uint64_t*)(*outputBuffer + bufferOffset) = entry.kve_end;
 			bufferOffset += sizeof(uint64_t);
 			#ifdef DEBUG
-				networkSendDebugMessage("%16lx\n", entry.kve_end);
+				networkSendDebugMessage("%#16lx\n", entry.kve_end);
 			#endif
 		}
 
