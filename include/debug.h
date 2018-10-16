@@ -193,3 +193,29 @@ uint8_t debugAddWatchpoint(struct clientArgs* client, uint8_t* inputBuffer, uint
  *  returns: RPC Error code
  */
 uint8_t debugRemoveWatchpoint(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength);
+
+/*
+ * Function:  debugStopThread
+ * --------------------
+ * Stop a given thread from executing.
+ *
+ *  client:       	The client data.
+ *	inputBuffer:	The input buffer containing the arguments. (ProcessId)
+ *	inputLength:	The total length of the input buffer.
+ *
+ *  returns: RPC Error code
+ */
+uint8_t debugStopThread(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength);
+
+/*
+ * Function:  debugResumeThread
+ * --------------------
+ * Resume a given stopped thread.
+ *
+ *  client:       	The client data.
+ *	inputBuffer:	The input buffer containing the arguments. (ProcessId)
+ *	inputLength:	The total length of the input buffer.
+ *
+ *  returns: RPC Error code
+ */
+uint8_t debugResumeThread(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength);

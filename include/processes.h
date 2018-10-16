@@ -68,3 +68,18 @@ uint8_t attach(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLe
  *  returns: RPC Error code
  */
 uint8_t detach(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength);
+
+/*
+ * Function:  getProcessThreads
+ * --------------------
+ * Read a list of threads for a given process.
+ *
+ *	client:			The client data.
+ *	outputBuffer:	The buffer to put the threads into.
+ *	outputLength:	The length variable to put the length of the threads into.
+ *	inputBuffer:	The input buffer containing the arguments. (Process)
+ *	inputLength:	The total length of the input buffer.
+ *
+ *  returns: RPC Error code
+ */
+uint8_t getProcessThreads(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength);

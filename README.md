@@ -16,6 +16,7 @@ Available Remote Functions
 | poke()                   | POKE                      | Write a buffer to memory at a given addrss                  |
 | peek()                   | PEEK                      | Read a buffer from memory at a given address                |
 | getProcesses()           | GET_PROCESSES             | Get a list of running processes                             |
+| getProcessThreads()      | GET_PROCESS_THREADS       | Get the threads the process has                             |
 | getModules()             | GET_MODULES               | Get a list of running modules                               |
 | getRegions()             | GET_REGIONS               | Get regions for a given process                             |
 | getFirmware()            | GET_FIRMWARE              | Get the firmware version                                    |
@@ -39,6 +40,8 @@ Available Remote Functions
 | debugRemoveBreakpoint()  | DEBUG_REMOVE_BREAKPOINT   | Remove a breakpoint from the process                        |
 | debugAddWatchpoint()     | DEBUG_ADD_WATCHPOINT      | Add a watch to the process                                  |
 | debugRemoveWatchpoint()  | DEBUG_REMOVE_WATCHPOINT   | Remove a watch from the process                             |
+| debugStopThread()        | DEBUG_STOP_THREAD         | Stop a given thread from running                            |
+| debugResumeThread()      | DEBUG_RESUME_THREAD       | Resume a given thread that was previously stopped           |
 
 
 Thanks to 2much4u, CTurt, Kiwidog and Golden for sources / advice.

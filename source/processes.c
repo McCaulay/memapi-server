@@ -62,11 +62,11 @@ uint8_t getProcesses(struct clientArgs* client, uint8_t** buffer, uint32_t* leng
 		}
 
 		char* name = dump + 0x1bf;
-		char* thread = dump + 0x18a;
+		// char* thread = dump + 0x18a;
 
 		*length += sizeof(int32_t);
 		*length += strlen(name) + 1;
-		*length += strlen(thread) + 1;
+		// *length += strlen(thread) + 1;
 
 		free(dump);
 	}
@@ -91,7 +91,7 @@ uint8_t getProcesses(struct clientArgs* client, uint8_t** buffer, uint32_t* leng
 		}
 
 		char* name = dump + 0x1bf;
-		char* thread = dump + 0x18a;
+		// char* thread = dump + 0x18a;
 
 		*(int32_t*)(*buffer + *length) = pid;
 		*length += sizeof(int32_t);
@@ -99,11 +99,11 @@ uint8_t getProcesses(struct clientArgs* client, uint8_t** buffer, uint32_t* leng
 		sprintf((char*)(*buffer + *length), "%s\0", name);
 		*length += strlen(name) + 1;
 
-		sprintf((char*)(*buffer + *length), "%s\0", thread);
-		*length += strlen(thread) + 1;
+		// sprintf((char*)(*buffer + *length), "%s\0", thread);
+		// *length += strlen(thread) + 1;
 
 		#ifdef DEBUG
-			networkSendDebugMessage("			[%s@getProcesses] Process - Id: %d, Name: %s, Thread: %s\n", client->ip, pid, name, thread);
+			networkSendDebugMessage("			[%s@getProcesses] Process - Id: %d, Name: %s\n", client->ip, pid, name);
 		#endif
 
 		free(dump);
@@ -147,8 +147,31 @@ uint8_t detach(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLe
 	ptrace(PT_DETACH, input.processId, NULL, NULL);
 
 	#ifdef DEBUG
-		networkSendDebugMessage("			[%s@peek] Detached from process: %d\n", client->ip, input.processId);
+		networkSendDebugMessage("			[%s@detach] Detached from process: %d\n", client->ip, input.processId);
 	#endif
+
+	return NO_ERROR;
+}
+
+uint8_t getProcessThreads(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
+{
+	struct inputDetach input = *(struct inputDetach*)(inputBuffer + 1);
+
+	#ifdef DEBUG
+		networkSendDebugMessage("			[%s@getProcessThreads] Getting threads for process: %d\n", client->ip, input.processId);
+	#endif
+
+	// Get the number of threads
+	size_t threadCount = ptrace(PT_GETNUMLWPS, input.processId, NULL, NULL);
+
+	// Set output length
+	*outputLength = threadCount * sizeof(uint32_t);
+
+	// Reallocate memory buffer
+	*outputBuffer = realloc(*outputBuffer, *outputLength);
+
+	// Get this processes threads
+	ptrace(PT_GETLWPLIST, input.processId, (void*)*outputBuffer, threadCount);
 
 	return NO_ERROR;
 }

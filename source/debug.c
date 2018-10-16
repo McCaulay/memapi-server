@@ -265,13 +265,13 @@ uint8_t debugAddWatchpoint(struct clientArgs* client, uint8_t* inputBuffer, uint
 	#endif
 
 	// Get this processes threads
-	size_t threadCount = ptrace(PT_GETNUMLWPS, input.processId, NULL, 0);
+	size_t threadCount = ptrace(PT_GETNUMLWPS, input.processId, NULL, NULL);
 	uint32_t* threads = malloc(threadCount * sizeof(uint32_t));
 	ptrace(PT_GETLWPLIST, input.processId, (void*)threads, threadCount);
 
 	// Get Registers
 	struct dbreg registers;
-	ptrace(PT_GETDBREGS, input.processId, &registers, 0);
+	ptrace(PT_GETDBREGS, input.processId, &registers, NULL);
 
 	// Add watchpoint
 	DBREG_DRXX(registers, 7) &= ~DBREG_DR7_MASK(input.registerIndex);
@@ -302,13 +302,13 @@ uint8_t debugRemoveWatchpoint(struct clientArgs* client, uint8_t* inputBuffer, u
 	#endif
 
 	// Get this processes threads
-	size_t threadCount = ptrace(PT_GETNUMLWPS, input.processId, NULL, 0);
+	size_t threadCount = ptrace(PT_GETNUMLWPS, input.processId, NULL, NULL);
 	uint32_t* threads = malloc(threadCount * sizeof(uint32_t));
 	ptrace(PT_GETLWPLIST, input.processId, (void*)threads, threadCount);
 
 	// Get Registers
 	struct dbreg registers;
-	ptrace(PT_GETDBREGS, input.processId, &registers, 0);
+	ptrace(PT_GETDBREGS, input.processId, &registers, NULL);
 
 	// Remove watchpoint
 	DBREG_DRXX(registers, 7) &= ~DBREG_DR7_MASK(input.registerIndex);
@@ -321,6 +321,34 @@ uint8_t debugRemoveWatchpoint(struct clientArgs* client, uint8_t* inputBuffer, u
 
 	// Cleanup memory
 	free(threads);
+
+	return NO_ERROR;
+}
+
+uint8_t debugStopThread(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength)
+{
+	struct inputDebug input = *(struct inputDebug*)(inputBuffer + 1);
+
+	// Suspend thread
+	ptrace(PT_SUSPEND, input.processId, NULL, NULL);
+
+	#ifdef DEBUG
+		networkSendDebugMessage("			[%s@debugStopThread] Suspended thread: %d\n", client->ip, input.processId);
+	#endif
+
+	return NO_ERROR;
+}
+
+uint8_t debugResumeThread(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLength)
+{
+	struct inputDebug input = *(struct inputDebug*)(inputBuffer + 1);
+
+	// Suspend thread
+	ptrace(PT_RESUME, input.processId, NULL, NULL);
+
+	#ifdef DEBUG
+		networkSendDebugMessage("			[%s@debugResumeThread] Resumed thread: %d\n", client->ip, input.processId);
+	#endif
 
 	return NO_ERROR;
 }

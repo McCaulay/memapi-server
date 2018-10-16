@@ -101,6 +101,12 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 			#endif
 			error = getProcesses(client, &outputBuffer, &outputLength);
 			break;
+		case GET_PROCESS_THREADS:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call getProcessThreads() invoked\n", client->ip);
+			#endif
+			error = getProcessThreads(client, &outputBuffer, &outputLength, buffer, length);
+			break;
 		case GET_MODULES:
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Method call getModules() invoked\n", client->ip);
@@ -202,6 +208,18 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 				networkSendDebugMessage("		[%s] Method call debugRemoveWatchpoint() invoked\n", client->ip);
 			#endif
 			error = debugRemoveWatchpoint(client, buffer, length);
+			break;
+		case DEBUG_STOP_THREAD:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugStopThread() invoked\n", client->ip);
+			#endif
+			error = debugStopThread(client, buffer, length);
+			break;
+		case DEBUG_RESUME_THREAD:
+			#ifdef DEBUG
+				networkSendDebugMessage("		[%s] Method call debugResumeThread() invoked\n", client->ip);
+			#endif
+			error = debugResumeThread(client, buffer, length);
 			break;
 		default:
 			#ifdef DEBUG
