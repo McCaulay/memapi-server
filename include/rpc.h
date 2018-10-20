@@ -39,6 +39,7 @@
 #define GET_PROCESS_THREADS 32
 #define DEBUG_STOP_THREAD 33
 #define DEBUG_RESUME_THREAD 34
+#define DEBUG_CHECK_INTERRUPT 35
 
 #define NO_ERROR 0
 #define INVALID_PARAMETER 1
@@ -52,6 +53,7 @@
 #define INVALID_CALL_TYPE 9
 #define REQUEST_FAILED 10
 #define INVALID_REGISTER_INDEX 11
+#define NO_INTERRUPT 12
 
 /*
  * Function:  handleRpc

@@ -221,6 +221,9 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 			#endif
 			error = debugResumeThread(client, buffer, length);
 			break;
+		case DEBUG_CHECK_INTERRUPT:
+			error = debugCheckInterrupt(client, &outputBuffer, &outputLength, buffer, length);
+			break;
 		default:
 			#ifdef DEBUG
 				networkSendDebugMessage("		[%s] Invalid method call parameter [%d]\n", client->ip, method);
@@ -230,7 +233,7 @@ void handleRpc(struct clientArgs* client, uint8_t* buffer, uint32_t length)
 	}
 
 	#ifdef DEBUG
-		if (error != NO_ERROR)
+		if (error != NO_ERROR && error != NO_INTERRUPT)
 			networkSendDebugMessage("		[%s] RPC Error %d\n", client->ip, error);
 	#endif
 	

@@ -42,6 +42,7 @@ Available Remote Functions
 | debugRemoveWatchpoint()  | DEBUG_REMOVE_WATCHPOINT   | Remove a watch from the process                             |
 | debugStopThread()        | DEBUG_STOP_THREAD         | Stop a given thread from running                            |
 | debugResumeThread()      | DEBUG_RESUME_THREAD       | Resume a given thread that was previously stopped           |
+| debugCheckInterrupt()    | DEBUG_CHECK_INTERRUPT     | Check if there is a interrupt                               |
 
 
 Thanks to 2much4u, CTurt, Kiwidog and Golden for sources / advice.

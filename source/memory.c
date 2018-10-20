@@ -30,11 +30,12 @@ uint8_t peek(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* output
 	#endif
 
 	// Ensure memory address is valid
-	if (!isAddressRangeValid(client, input.processId, input.address, input.address + input.length))
-		return INVALID_ADDRESS;
+	//if (!isAddressRangeValid(client, input.processId, input.address, input.address + input.length))
+		// return INVALID_ADDRESS;
 
 	// Reallocate memory buffer
 	*outputBuffer = realloc(*outputBuffer, input.length);
+	memset(*outputBuffer, 0, input.length);
 
 	// Set output length
 	*outputLength = input.length;
@@ -46,7 +47,7 @@ uint8_t peek(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* output
 	ptDesc.piod_addr = *outputBuffer;
 	ptDesc.piod_op = PIOD_READ_D;
 	ptrace(PT_IO, input.processId, &ptDesc, 0);
-	
+
 	#ifdef DEBUG
 		networkSendDebugMessage("			[%s@peek] Read %d bytes from process %d\n", client->ip, input.length, input.processId);
 
@@ -89,8 +90,8 @@ uint8_t poke(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLeng
 	#endif
 
 	// Ensure memory address is valid
-	if (!isAddressRangeValid(client, input.processId, input.address, input.address + input.length))
-		return INVALID_ADDRESS;
+	// if (!isAddressRangeValid(client, input.processId, input.address, input.address + input.length))
+		// return INVALID_ADDRESS;
 
 	// Write buffer into memory into
 	struct ptrace_io_desc ptDesc;

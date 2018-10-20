@@ -352,3 +352,29 @@ uint8_t debugResumeThread(struct clientArgs* client, uint8_t* inputBuffer, uint3
 
 	return NO_ERROR;
 }
+
+uint8_t debugCheckInterrupt(struct clientArgs* client, uint8_t** outputBuffer, uint32_t* outputLength, uint8_t* inputBuffer, uint32_t inputLength)
+{
+	struct inputDebug input = *(struct inputDebug*)(inputBuffer + 1);
+
+	int status = 0;
+	int result = wait4(input.processId, &status, WNOHANG, NULL);
+	if (result == 0 || status == 0)
+		return NO_INTERRUPT;
+
+	int signal = WSTOPSIG(status);
+	if (signal == 0)
+		return NO_INTERRUPT;
+
+	#ifdef DEBUG
+		networkSendDebugMessage("			[%s@debugCheckInterrupt] Process: %d Interrupt: %d\n", client->ip, input.processId, signal);
+	#endif
+
+	// Reallocate memory buffer
+	*outputBuffer = realloc(*outputBuffer, sizeof(int));
+	*outputLength = sizeof(int);
+
+	*(int*)(*outputBuffer) = signal;
+
+	return NO_ERROR;	
+}
