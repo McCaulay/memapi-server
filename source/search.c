@@ -146,7 +146,7 @@ uint8_t searchStart(struct clientArgs* client, uint8_t* inputBuffer, uint32_t in
 			inSearchRegion = true;
 
 		#ifdef DEBUG
-			networkSendDebugMessage("			[%s@searchStart] %#16lx to %#16lx (In: %c)\n", client->ip, entry.kve_start, entry.kve_end, inSearchRegion ? 'y' : 'n');
+			// networkSendDebugMessage("			[%s@searchStart] %#16lx to %#16lx (In: %c)\n", client->ip, entry.kve_start, entry.kve_end, inSearchRegion ? 'y' : 'n');
 		#endif
 
 		// In this memory region
