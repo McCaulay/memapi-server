@@ -116,6 +116,9 @@ uint8_t attach(struct clientArgs* client, uint8_t* inputBuffer, uint32_t inputLe
 {
 	struct inputAttach input = *(struct inputAttach*)(inputBuffer + 1);
 
+	// Detach from process
+	ptrace(PT_DETACH, input.processId, NULL, NULL);
+
 	// Attach to process
     int result = ptrace(PT_ATTACH, input.processId, NULL, NULL);
 	wait(NULL);
