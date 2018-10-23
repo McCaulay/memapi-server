@@ -1,6 +1,6 @@
 #pragma once
 
-#define DEBUG
+// #define DEBUG
 #define DEBUG_IP "192.168.0.38"
 #define DEBUG_PORT 9023
 

@@ -2,8 +2,10 @@
 
 ## Debugging
 Edit the `include/defines.h` file to change the debug IP address and port to your PC.
+Make sure you have a TCP listener on the TCP port you specified.
+For linux you can do ```nc -lk 9023```.
 ```c
-#define DEBUG 1
+#define DEBUG
 #define DEBUG_IP "192.168.0.38"
 #define DEBUG_PORT 9023
 ```
